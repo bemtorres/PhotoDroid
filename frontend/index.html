@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhotoDroid</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            surface: "#0f172a",
+            panel: "#111827",
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="css/app.css" />
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+</head>
+<body class="dark">
+  <div class="flex h-screen overflow-hidden">
+    <aside class="w-60 shrink-0 border-r border-slate-700/50 bg-slate-900/70 p-4 flex flex-col gap-6">
+      <div class="flex items-center gap-3 px-2">
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 grid place-items-center font-bold text-white">P</div>
+        <div>
+          <div class="font-semibold tracking-wide text-white">PhotoDroid</div>
+          <div class="text-[11px] text-slate-400" data-i18n="app.subtitle">Android Security</div>
+        </div>
+      </div>
+
+      <nav class="flex flex-col gap-1 text-sm">
+        <button class="nav-item active flex items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-slate-300 hover:bg-slate-800/70" data-view="dashboard">
+          <span>▦</span><span data-i18n="nav.dashboard">Dashboard</span>
+        </button>
+        <button class="nav-item flex items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-slate-300 hover:bg-slate-800/70" data-view="scanner">
+          <span>◎</span><span data-i18n="nav.scanner">Scanner</span>
+        </button>
+        <button class="nav-item flex items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-slate-300 hover:bg-slate-800/70" data-view="apps">
+          <span>▦</span><span data-i18n="nav.apps">Apps</span>
+        </button>
+        <button class="nav-item flex items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-slate-300 hover:bg-slate-800/70" data-view="reports">
+          <span>≣</span><span data-i18n="nav.reports">Reports</span>
+        </button>
+      </nav>
+
+      <div class="mt-auto card p-3 text-xs text-slate-400">
+        <div class="mb-1 text-slate-300 font-medium" data-i18n="sidebar.status">Status</div>
+        <div class="flex items-center gap-2">
+          <span id="conn-dot" class="h-2 w-2 rounded-full bg-slate-500"></span>
+          <span id="conn-label" data-i18n="device.waiting">Waiting for device…</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0">
+      <header class="flex items-center justify-between border-b border-slate-700/50 bg-slate-900/50 px-6 py-3">
+        <div>
+          <h1 class="text-lg font-semibold text-white" data-i18n="header.title">Security Dashboard</h1>
+          <p class="text-xs text-slate-400" data-i18n="header.hint">Analyze, diagnose and clean connected devices</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <select id="lang-select" class="rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm text-slate-200 outline-none focus:border-blue-500">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="pt">Português</option>
+            <option value="zh-CN">中文</option>
+            <option value="ko">한국어</option>
+            <option value="ja">日本語</option>
+            <option value="de">Deutsch</option>
+            <option value="fr">Français</option>
+          </select>
+          <button id="btn-detect" class="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-500 transition" data-i18n="device.detect">Detect device</button>
+        </div>
+      </header>
+
+      <section class="flex-1 overflow-y-auto p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="card p-4">
+            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="card.device">Device</div>
+            <div id="device-model" class="mt-2 text-xl font-semibold text-white">—</div>
+            <div id="device-meta" class="text-sm text-slate-400">Android · USB</div>
+          </div>
+          <div class="card p-4">
+            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="card.risk">Risk level</div>
+            <div id="risk-level" class="mt-2 text-xl font-semibold text-emerald-400" data-i18n="risk.unknown">Unknown</div>
+            <div id="risk-score" class="text-sm text-slate-400">0 / 100</div>
+          </div>
+          <div class="card p-4">
+            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="card.threats">Threats</div>
+            <div id="threat-count" class="mt-2 text-xl font-semibold text-white">0</div>
+            <div class="text-sm text-slate-400" data-i18n="card.threatsHint">Findings in last scan</div>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="mb-3 flex items-center justify-between">
+            <div class="text-sm font-medium text-slate-200" data-i18n="scan.title">System scan</div>
+            <button id="btn-scan" class="rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 transition" data-i18n="scan.start">Start scan</button>
+          </div>
+          <div class="progress-track h-2 w-full">
+            <div id="progress-bar" class="progress-fill"></div>
+          </div>
+          <div id="progress-label" class="mt-2 text-xs text-slate-400">0%</div>
+        </div>
+
+        <div class="card p-5">
+          <div class="mb-3 flex items-center justify-between">
+            <div class="text-sm font-medium text-slate-200" data-i18n="log.title">Activity log</div>
+            <button id="btn-clear-log" class="text-xs text-slate-400 hover:text-slate-200" data-i18n="log.clear">Clear</button>
+          </div>
+          <div id="log-console" class="h-52 overflow-y-auto rounded-lg bg-slate-950/70 p-3 text-slate-300"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/scanner.js"></script>
+</body>
+</html>
