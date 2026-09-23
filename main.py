@@ -4,12 +4,14 @@ from pathlib import Path
 from PySide6.QtCore import QUrl, Qt
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow
 
 from backend.bridge import Bridge
 
 BASE_DIR = Path(__file__).resolve().parent
 INDEX_PATH = BASE_DIR / "frontend" / "index.html"
+APP_ICON_PATH = BASE_DIR / "assets" / "PhotoDroid_300.png"
 
 
 class MainWindow(QMainWindow):
@@ -42,6 +44,8 @@ def main() -> int:
     app = QApplication(sys.argv)
     app.setApplicationName("PhotoDroid")
     app.setOrganizationName("PhotoDroid")
+    if APP_ICON_PATH.is_file():
+        app.setWindowIcon(QIcon(str(APP_ICON_PATH)))
 
     bridge = Bridge()
     window = MainWindow(bridge)

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhotoDroid — escanea Android como un antivirus escanea tu PC</title>
+  <meta name="description" content="PhotoDroid conecta tu PC a un Android por USB y simula un escaneo completo: apps, permisos peligrosos, accesibilidad y procesos. Detecta riesgos en minutos, sin nube." />
+  <link rel="icon" type="image/png" href="../assets/PhotoDroid_300.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="PhotoDroid — escanea Android como un antivirus" />
+  <meta property="og:description" content="Escaneo de apps, permisos y procesos en Android. Local, por USB, en minutos." />
+  <meta property="og:image" content="../assets/PhotoDroid_full_800.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="../assets/PhotoDroid_full_800.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <a class="btn btn--ghost" href="#demo" data-i18n="a11y.skipDemo" style="position:absolute;left:-9999px;top:auto" onfocus="this.style.left='1rem';this.style.top='1rem';this.style.zIndex='500';this.style.background='var(--color-paper)'" onblur="this.style.left='-9999px'">Saltar a la demo</a>
+
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="#">
+        <img class="nav__logo" src="../assets/PhotoDroid_300.png" width="28" height="28" alt="" />
+        PhotoDroid
+      </a>
+      <ul class="nav__links">
+        <li><a href="#demo" data-i18n="nav.demo">Demo</a></li>
+        <li><a href="#detecta" data-i18n="nav.detects">Qué detecta</a></li>
+        <li><a href="#como" data-i18n="nav.how">Cómo funciona</a></li>
+        <li><a href="install.html" data-i18n="nav.install">Instalar</a></li>
+      </ul>
+      <div class="nav__actions">
+        <label class="nav__lang" for="site-lang">
+          <span class="visually-hidden" data-i18n="nav.lang">Idioma</span>
+          <select id="site-lang" data-site-lang aria-label="Idioma">
+            <option value="es">ES</option>
+            <option value="en">EN</option>
+            <option value="pt">PT</option>
+            <option value="zh-CN">中文</option>
+            <option value="ko">한국어</option>
+            <option value="ja">日本語</option>
+            <option value="de">DE</option>
+            <option value="fr">FR</option>
+          </select>
+        </label>
+        <button type="button" class="nav__cmdk" data-palette-open data-i18n-aria="a11y.search" aria-label="Abrir paleta de comandos">
+          <span data-i18n="nav.search">Buscar</span> <kbd>⌘K</kbd>
+        </button>
+        <a class="btn btn--primary" href="install.html" data-i18n="nav.installCta">Instalar</a>
+        <button type="button" class="nav__menu" data-menu-toggle aria-expanded="false" aria-controls="nav-sheet" data-i18n-aria="a11y.menu" aria-label="Abrir menú">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M3 5h12M3 9h12M3 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="container nav__sheet" id="nav-sheet" data-nav-sheet>
+      <ul>
+        <li><a href="#demo" data-i18n="nav.demo">Demo</a></li>
+        <li><a href="#detecta" data-i18n="nav.detects">Qué detecta</a></li>
+        <li><a href="#como" data-i18n="nav.how">Cómo funciona</a></li>
+        <li><a href="install.html" data-i18n="nav.install">Instalar</a></li>
+        <li><a href="#casos" data-i18n="nav.use">Uso</a></li>
+        <li><a href="#" data-palette-open data-i18n="nav.searchSheet">Buscar (⌘K)</a></li>
+      </ul>
+      <label class="nav__lang nav__lang--sheet" for="site-lang-sheet">
+        <span class="label" data-i18n="nav.lang">Idioma</span>
+        <select id="site-lang-sheet" data-site-lang aria-label="Idioma">
+          <option value="es">ES · Español</option>
+          <option value="en">EN · English</option>
+          <option value="pt">PT · Português</option>
+          <option value="zh-CN">中文 · 简体</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="de">DE · Deutsch</option>
+          <option value="fr">FR · Français</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <!-- SALES HERO -->
+    <section class="hero">
+      <div class="container hero__grid">
+        <div class="reveal">
+          <div class="hero__lockup">
+            <img class="hero__mark" src="../assets/PhotoDroid_full_300.png" width="96" height="96" alt="" />
+            <div class="hero__lockup-text">
+              <div class="hero__eyebrow">
+                <span class="hero__tick" aria-hidden="true"></span>
+                <span class="label" data-i18n="hero.eyebrow">Escaneo Android · Local · USB</span>
+              </div>
+              <h1>PhotoDroid</h1>
+            </div>
+          </div>
+          <p class="hero__lede" data-i18n="hero.lede">
+            Como un antivirus, pero para tu teléfono. Conecta el Android por USB y PhotoDroid
+            recorre apps, permisos y procesos: te dice qué es normal y qué conviene revisar —
+            sin subir nada a la nube.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#demo" data-i18n="hero.ctaDemo">Simular un escaneo</a>
+            <a class="btn btn--ghost" href="install.html" data-i18n="hero.ctaInstall">Empezar ahora</a>
+          </div>
+        </div>
+
+        <div class="code-card reveal" id="demo" data-scan-demo aria-label="Demo de escaneo">
+          <div class="code-card__bar">
+            <span data-i18n="demo.barTitle">scan · photodroid</span>
+            <span class="code-card__status" data-demo-status data-i18n="demo.statusIdle">listo</span>
+          </div>
+          <div class="scan">
+            <div class="scan__device">
+              <span class="scan__dot" aria-hidden="true"></span>
+              <span data-demo-device data-i18n="demo.device">Pixel 7 · Android 14 · USB</span>
+            </div>
+            <div class="scan__progress" aria-hidden="true">
+              <div class="scan__bar" data-demo-bar></div>
+            </div>
+            <p class="scan__stage" data-demo-stage data-i18n="demo.stageIdle">Pulsa «Iniciar escaneo» para simular una operación completa.</p>
+            <ul class="scan__log" data-demo-log></ul>
+            <div class="scan__findings" data-demo-findings hidden>
+              <div class="scan__score">
+                <span class="scan__score-num" data-demo-score>—</span>
+                <span class="scan__score-label" data-i18n="demo.scoreLabel">riesgo detectado</span>
+              </div>
+              <ul class="scan__alerts" data-demo-alerts></ul>
+            </div>
+            <div class="scan__actions">
+              <button type="button" class="btn btn--primary" data-demo-start data-i18n="demo.start">Iniciar escaneo</button>
+              <button type="button" class="btn btn--ghost" data-demo-reset hidden data-i18n="demo.reset">Repetir</button>
+            </div>
+            <p class="scan__note" data-i18n="demo.note">Simulación visual de la app real · datos de ejemplo</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHAT IT DETECTS -->
+    <section class="section" id="detecta">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="label" data-i18n="detect.label">Capacidades</span>
+          <h2 data-i18n="detect.title">Qué puedes encontrar</h2>
+          <p data-i18n="detect.lede">
+            El mismo tipo de señal que buscas en un análisis de seguridad — aplicada al móvil conectado.
+          </p>
+        </div>
+
+        <div class="threats">
+          <article class="threat reveal">
+            <span class="threat__level threat__level--high" data-i18n="detect.high">Alto</span>
+            <h3 data-i18n="detect.t1">Permisos de más</h3>
+            <p data-i18n="detect.d1">Apps con SMS, instalación de paquetes u otros permisos sensibles que no necesitan para su función.</p>
+          </article>
+          <article class="threat reveal">
+            <span class="threat__level threat__level--high" data-i18n="detect.high">Alto</span>
+            <h3 data-i18n="detect.t2">Accesibilidad abusada</h3>
+            <p data-i18n="detect.d2">Servicios de accesibilidad activos que pueden leer la pantalla o controlar toques — clásico de spyware y banqueo falso.</p>
+          </article>
+          <article class="threat reveal">
+            <span class="threat__level threat__level--mid" data-i18n="detect.mid">Medio</span>
+            <h3 data-i18n="detect.t3">Superposición (overlay)</h3>
+            <p data-i18n="detect.d3">Capas que se dibujan sobre otras apps: phishing de credenciales y robo de pantallas de banco.</p>
+          </article>
+          <article class="threat reveal">
+            <span class="threat__level threat__level--mid" data-i18n="detect.mid">Medio</span>
+            <h3 data-i18n="detect.t4">Apps que no reconoces</h3>
+            <p data-i18n="detect.d4">Inventario completo de paquetes usuario y sistema con ruta APK — ideal en móviles de segunda mano o de empresa.</p>
+          </article>
+          <article class="threat reveal">
+            <span class="threat__level threat__level--low" data-i18n="detect.low">Informativo</span>
+            <h3 data-i18n="detect.t5">Procesos raros</h3>
+            <p data-i18n="detect.d5">Qué está corriendo ahora mismo en el equipo, para cruzar con lo que deberías ver.</p>
+          </article>
+          <article class="threat reveal">
+            <span class="threat__level threat__level--ok" data-i18n="detect.ok">OK</span>
+            <h3 data-i18n="detect.t6">Estado del dispositivo</h3>
+            <p data-i18n="detect.d6">Modelo, versión de Android, serie y batería — la base de cualquier informe o ticket de soporte.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS — 3 steps sales -->
+    <section class="section band" id="como">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="label" data-i18n="how.label">Operación</span>
+          <h2 data-i18n="how.title">Tres pasos. Como un análisis.</h2>
+          <p data-i18n="how.lede">
+            No instalas nada en el teléfono. El PC hace el trabajo por USB.
+          </p>
+        </div>
+
+        <div class="split">
+          <div class="reveal">
+            <ol class="steps steps--compact">
+              <li>
+                <span class="steps__stage">01</span>
+                <div class="steps__body">
+                  <h3 data-i18n="how.s1t">Conecta</h3>
+                  <p data-i18n="how.s1d">Cable USB y depuración activada. PhotoDroid ve el dispositivo al instante.</p>
+                </div>
+              </li>
+              <li>
+                <span class="steps__stage">02</span>
+                <div class="steps__body">
+                  <h3 data-i18n="how.s2t">Escanea</h3>
+                  <p data-i18n="how.s2d">Un botón: apps → permisos → procesos. Progreso y log en vivo, sin congelar la interfaz.</p>
+                </div>
+              </li>
+              <li>
+                <span class="steps__stage">03</span>
+                <div class="steps__body">
+                  <h3 data-i18n="how.s3t">Decide</h3>
+                  <p data-i18n="how.s3d">Lista priorizada con nivel de riesgo. Tú actúas: desinstalas, revocas o documentas.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+          <div class="reveal">
+            <table class="spec">
+              <caption class="label" data-i18n="how.tableCaption" style="text-align:left;caption-side:top;padding-bottom:var(--space-sm)">Por qué PhotoDroid</caption>
+              <tbody>
+                <tr>
+                  <th scope="row" data-i18n="how.r1k">Privado</th>
+                  <td data-i18n="how.r1v">Todo ocurre en tu PC. Sin cuenta, sin nube, sin subir el dispositivo a nadie.</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="how.r2k">Sin instalar en el móvil</th>
+                  <td data-i18n="how.r2v">Solo depuración USB. No hay APK que confiar ciegamente.</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="how.r3k">Rápido de usar</th>
+                  <td data-i18n="how.r3v">Detectar → escanear → revisar. Pensado para soporte y auditoría, no solo para experts.</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="how.r4k">8 idiomas</th>
+                  <td data-i18n="how.r4v">ES, EN, PT, ZH, KO, JA, DE, FR en la app y en esta web.</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="how.r5k">Sin base de datos</th>
+                  <td data-i18n="how.r5v">Configuración y reglas en JSON. Ligero, auditable, fácil de versionar.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- USE CASES -->
+    <section class="section" id="casos">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="label" data-i18n="cases.label">Para quién</span>
+          <h2 data-i18n="cases.title">Cuándo abrir PhotoDroid</h2>
+          <p data-i18n="cases.lede">Situaciones reales en las que un escaneo rápido cambia la decisión.</p>
+        </div>
+        <ul class="stack-list reveal">
+          <li>
+            <strong data-i18n="cases.t1">Móvil de segunda mano</strong>
+            <span data-i18n="cases.d1">Antes de confiar en el aparato, mira qué apps de fábrica o de tercero se han quedado.</span>
+          </li>
+          <li>
+            <strong data-i18n="cases.t2">Soporte y reparación</strong>
+            <span data-i18n="cases.d2">Documento el estado del equipo al entrar el ticket: modelo, apps y permisos raros.</span>
+          </li>
+          <li>
+            <strong data-i18n="cases.t3">Dispositivo de empresa</strong>
+            <span data-i18n="cases.d3">Auditoría rápida de flota o de un portador concreto sin enviar el teléfono a laboratorio.</span>
+          </li>
+          <li>
+            <strong data-i18n="cases.t4">Sospecha de spyware</strong>
+            <span data-i18n="cases.d4">Accesibilidad, overlay y permisos sensibles en una sola pasada — el primer filtro antes de un análisis profundo.</span>
+          </li>
+          <li>
+            <strong data-i18n="cases.t5">Curiosidad técnica</strong>
+            <span data-i18n="cases.d5">Entender qué hace de verdad tu Android día a día, con datos crudos y legibles.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section--tight" id="instalar">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="label" data-i18n="install.ctaLabel">Listo para probar</span>
+          <h2 data-i18n="install.ctaTitle">Instalación en 4 pasos</h2>
+          <p data-i18n-html="install.ctaLede">
+            Python, ADB, depuración USB y arranque — la guía completa está en una página propia.
+          </p>
+          <p style="margin-top:var(--space-lg)">
+            <a class="btn btn--primary" href="install.html" data-i18n="install.ctaBtn">Abrir guía de instalación</a>
+            <a class="btn btn--ghost" href="../README.md" data-i18n="install.ctaClone">Clonar o contribuir</a>
+          </p>
+          <p class="install__license" data-i18n-html="install.licenseLine">
+            Licencia <strong>MIT</strong> · usa, clona y aporta al proyecto.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="container">
+      <p class="foot__line">
+        <span class="foot__brand">
+          <img class="foot__logo" src="../assets/PhotoDroid_300.png" width="20" height="20" alt="" />
+          PhotoDroid
+        </span>
+        <span data-i18n="foot.tagline">Escaneo Android local · sin nube</span>
+        <span>
+          <a href="install.html" data-i18n="foot.install">Instalar</a>
+          ·
+          <a href="../README.md" data-i18n="foot.readme">README</a>
+          ·
+          <a href="../README.md" data-i18n="foot.contribute">Clonar / contribuir</a>
+          ·
+          <a href="../LICENSE" data-i18n="foot.license">Licencia MIT</a>
+          ·
+          <a href="#" data-palette-open>⌘K</a>
+        </span>
+      </p>
+    </div>
+  </footer>
+
+  <div class="palette" data-palette hidden role="dialog" aria-modal="true" data-i18n-aria="a11y.palette" aria-label="Paleta de comandos">
+    <div class="palette__panel">
+      <input class="palette__input" type="text" data-palette-input data-i18n-placeholder="palette.placeholder" placeholder="Ir a una sección…" autocomplete="off" spellcheck="false" />
+      <ul class="palette__list" data-palette-list></ul>
+      <p class="palette__empty" data-palette-empty hidden data-i18n="palette.empty">Sin resultados.</p>
+    </div>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/demo.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

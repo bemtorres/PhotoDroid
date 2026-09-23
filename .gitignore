@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.env
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Reportes generados
+reports/*
+!reports/.gitkeep
+
+# Build / empaquetado
+build/
+dist/
+*.spec
+
+# Logs
+*.log
+pip-log.txt
+
+# Qt
+*.qmlc

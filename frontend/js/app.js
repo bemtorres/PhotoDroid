@@ -3,20 +3,23 @@ let bridgeReady = false;
 
 const UI = {
   log(msg) {
-    const box = document.getElementById("log-console");
-    if (!box) return;
-    const line = document.createElement("div");
     const time = new Date().toLocaleTimeString();
-    line.textContent = `[${time}] ${msg}`;
-    box.appendChild(line);
-    box.scrollTop = box.scrollHeight;
+    const line = `[${time}] ${msg}`;
+    document.querySelectorAll("#log-console, #log-console-scanner").forEach((box) => {
+      const row = document.createElement("div");
+      row.textContent = line;
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
+    });
   },
   setProgress(value) {
     const v = Math.max(0, Math.min(100, Number(value) || 0));
-    const bar = document.getElementById("progress-bar");
-    const label = document.getElementById("progress-label");
-    if (bar) bar.style.width = `${v}%`;
-    if (label) label.textContent = `${v}%`;
+    document.querySelectorAll(".progress-fill").forEach((bar) => {
+      bar.style.width = `${v}%`;
+    });
+    document.querySelectorAll("#progress-label").forEach((label) => {
+      label.textContent = `${v}%`;
+    });
   },
   setConnection(connected) {
     const dot = document.getElementById("conn-dot");
@@ -32,6 +35,28 @@ const UI = {
     const metaEl = document.getElementById("device-meta");
     if (modelEl) modelEl.textContent = model || "—";
     if (metaEl) metaEl.textContent = meta || "Android · USB";
+  },
+  setStat(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = String(value);
+  },
+  showView(name) {
+    document.querySelectorAll(".view-panel").forEach((panel) => panel.classList.add("hidden"));
+    const target = document.getElementById(`view-${name}`);
+    if (target) target.classList.remove("hidden");
+
+    const titles = {
+      dashboard: "header.title",
+      scanner: "scanner.title",
+      apps: "nav.apps",
+      reports: "nav.reports",
+    };
+    const titleEl = document.querySelector("header h1");
+    if (titleEl && titles[name]) titleEl.textContent = t(titles[name]);
+
+    document.querySelectorAll(".nav-item").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.view === name);
+    });
   },
 };
 
@@ -57,6 +82,9 @@ function initBridge() {
       if (sel) sel.value = lang;
       UI.log(`[i18n] ${lang}`);
     });
+
+    if (typeof bindDeviceSignals === "function") bindDeviceSignals();
+    if (typeof bindScanSignals === "function") bindScanSignals();
 
     bridge.getAppInfo((raw) => {
       try {
@@ -86,8 +114,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   document.getElementById("btn-clear-log")?.addEventListener("click", () => {
-    const box = document.getElementById("log-console");
-    if (box) box.innerHTML = "";
+    document.querySelectorAll("#log-console, #log-console-scanner").forEach((box) => {
+      box.innerHTML = "";
+    });
   });
 
   initBridge();

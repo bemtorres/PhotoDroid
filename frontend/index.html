@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PhotoDroid</title>
+  <link rel="icon" type="image/png" href="../assets/PhotoDroid_300.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -25,7 +26,7 @@
   <div class="flex h-screen overflow-hidden">
     <aside class="w-60 shrink-0 border-r border-slate-700/50 bg-slate-900/70 p-4 flex flex-col gap-6">
       <div class="flex items-center gap-3 px-2">
-        <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 grid place-items-center font-bold text-white">P</div>
+        <img src="../assets/PhotoDroid_300.png" alt="" width="36" height="36" class="h-9 w-9 rounded-xl object-cover" />
         <div>
           <div class="font-semibold tracking-wide text-white">PhotoDroid</div>
           <div class="text-[11px] text-slate-400" data-i18n="app.subtitle">Android Security</div>
@@ -77,7 +78,7 @@
         </div>
       </header>
 
-      <section class="flex-1 overflow-y-auto p-6 space-y-6">
+      <section id="view-dashboard" class="view-panel flex-1 overflow-y-auto p-6 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="card p-4">
             <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="card.device">Device</div>
@@ -113,6 +114,119 @@
             <button id="btn-clear-log" class="text-xs text-slate-400 hover:text-slate-200" data-i18n="log.clear">Clear</button>
           </div>
           <div id="log-console" class="h-52 overflow-y-auto rounded-lg bg-slate-950/70 p-3 text-slate-300"></div>
+        </div>
+      </section>
+
+      <section id="view-scanner" class="view-panel hidden flex-1 overflow-y-auto p-6 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base font-semibold text-white" data-i18n="scanner.title">Device scanners</h2>
+            <p class="text-xs text-slate-400" data-i18n="scanner.hint">Apps, permissions and live processes via ADB</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="btn-load-apps" class="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500 transition" data-i18n="scanner.apps">Load apps</button>
+            <button id="btn-scan-perms" class="rounded-lg bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-500 transition" data-i18n="scanner.perms">Scan permissions</button>
+            <button id="btn-load-procs" class="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-cyan-500 transition" data-i18n="scanner.procs">Load processes</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="card p-4">
+            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="scanner.countApps">Apps</div>
+            <div id="stat-apps" class="mt-1 text-2xl font-semibold text-white">0</div>
+          </div>
+          <div class="card p-4">
+            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="scanner.countRisky">Risky packages</div>
+            <div id="stat-risky" class="mt-1 text-2xl font-semibold text-amber-400">0</div>
+          </div>
+          <div class="card p-4">
+            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="scanner.countProcs">Processes</div>
+            <div id="stat-procs" class="mt-1 text-2xl font-semibold text-white">0</div>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="mb-3 flex items-center justify-between">
+            <div class="text-sm font-medium text-slate-200" data-i18n="scan.title">System scan</div>
+            <span id="scan-stage" class="text-xs text-slate-400">—</span>
+          </div>
+          <div class="progress-track h-2 w-full">
+            <div id="progress-bar-scanner" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <div class="flex border-b border-slate-700/60 bg-slate-900/60">
+            <button class="scan-tab active px-4 py-2.5 text-sm text-slate-300 border-b-2 border-blue-500" data-tab="apps" data-i18n="nav.apps">Apps</button>
+            <button class="scan-tab px-4 py-2.5 text-sm text-slate-400 hover:text-slate-200" data-tab="perms" data-i18n="scanner.permsShort">Permissions</button>
+            <button class="scan-tab px-4 py-2.5 text-sm text-slate-400 hover:text-slate-200" data-tab="procs" data-i18n="scanner.procsShort">Processes</button>
+          </div>
+
+          <div id="tab-apps" class="scan-tab-panel p-4">
+            <div class="overflow-auto max-h-96">
+              <table class="w-full text-left text-sm">
+                <thead class="text-xs uppercase text-slate-400 border-b border-slate-700/60">
+                  <tr>
+                    <th class="py-2 pr-4" data-i18n="table.package">Package</th>
+                    <th class="py-2 pr-4" data-i18n="table.type">Type</th>
+                    <th class="py-2" data-i18n="table.apk">APK path</th>
+                  </tr>
+                </thead>
+                <tbody id="apps-table" class="text-slate-300"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tab-perms" class="scan-tab-panel hidden p-4">
+            <div class="mb-3 text-xs text-slate-400" id="services-summary"></div>
+            <div class="overflow-auto max-h-96">
+              <table class="w-full text-left text-sm">
+                <thead class="text-xs uppercase text-slate-400 border-b border-slate-700/60">
+                  <tr>
+                    <th class="py-2 pr-4" data-i18n="table.package">Package</th>
+                    <th class="py-2 pr-4" data-i18n="table.dangerous">Dangerous</th>
+                    <th class="py-2 pr-4" data-i18n="table.flags">Flags</th>
+                    <th class="py-2" data-i18n="table.score">Score</th>
+                  </tr>
+                </thead>
+                <tbody id="perms-table" class="text-slate-300"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tab-procs" class="scan-tab-panel hidden p-4">
+            <div class="overflow-auto max-h-96">
+              <table class="w-full text-left text-sm">
+                <thead class="text-xs uppercase text-slate-400 border-b border-slate-700/60">
+                  <tr>
+                    <th class="py-2 pr-4">PID</th>
+                    <th class="py-2 pr-4" data-i18n="table.user">User</th>
+                    <th class="py-2" data-i18n="table.name">Name</th>
+                  </tr>
+                </thead>
+                <tbody id="procs-table" class="text-slate-300"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="mb-3 flex items-center justify-between">
+            <div class="text-sm font-medium text-slate-200" data-i18n="log.title">Activity log</div>
+          </div>
+          <div id="log-console-scanner" class="h-40 overflow-y-auto rounded-lg bg-slate-950/70 p-3 text-slate-300 text-xs font-mono"></div>
+        </div>
+      </section>
+
+      <section id="view-apps" class="view-panel hidden flex-1 overflow-y-auto p-6">
+        <div class="card p-5">
+          <div class="text-sm font-medium text-slate-200" data-i18n="apps.placeholder">Apps overview — open Scanner for full inventory</div>
+        </div>
+      </section>
+
+      <section id="view-reports" class="view-panel hidden flex-1 overflow-y-auto p-6">
+        <div class="card p-5">
+          <div class="text-sm font-medium text-slate-200" data-i18n="reports.placeholder">Reports — Phase 7</div>
         </div>
       </section>
     </main>

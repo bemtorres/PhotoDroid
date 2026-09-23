@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instalar PhotoDroid — guía en 4 pasos</title>
+  <meta name="description" content="Instala PhotoDroid en minutos: Python, ADB, depuración USB y primer escaneo del dispositivo Android." />
+  <link rel="icon" type="image/png" href="../assets/PhotoDroid_300.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Instalar PhotoDroid — guía en 4 pasos" />
+  <meta property="og:description" content="Instala PhotoDroid en minutos: Python, ADB, depuración USB y primer escaneo del dispositivo Android." />
+  <meta property="og:image" content="../assets/PhotoDroid_full_800.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="../assets/PhotoDroid_full_800.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="install">
+  <a class="btn btn--ghost" href="#pasos" data-i18n="a11y.skipInstall" style="position:absolute;left:-9999px;top:auto" onfocus="this.style.left='1rem';this.style.top='1rem';this.style.zIndex='500';this.style.background='var(--color-paper)'" onblur="this.style.left='-9999px'">Saltar a los pasos</a>
+
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="nav__brand" href="index.html">
+        <img class="nav__logo" src="../assets/PhotoDroid_300.png" width="28" height="28" alt="" />
+        PhotoDroid
+      </a>
+      <ul class="nav__links">
+        <li><a href="index.html#proyecto" data-i18n="nav.project">Proyecto</a></li>
+        <li><a href="index.html#arquitectura" data-i18n="nav.architecture">Arquitectura</a></li>
+        <li><a href="install.html" aria-current="page" data-i18n="nav.install">Instalar</a></li>
+        <li><a href="index.html#uso" data-i18n="nav.use">Uso</a></li>
+      </ul>
+      <div class="nav__actions">
+        <label class="nav__lang" for="site-lang">
+          <span class="visually-hidden" data-i18n="nav.lang">Idioma</span>
+          <select id="site-lang" data-site-lang aria-label="Idioma">
+            <option value="es">ES</option>
+            <option value="en">EN</option>
+            <option value="pt">PT</option>
+            <option value="zh-CN">中文</option>
+            <option value="ko">한국어</option>
+            <option value="ja">日本語</option>
+            <option value="de">DE</option>
+            <option value="fr">FR</option>
+          </select>
+        </label>
+        <button type="button" class="nav__cmdk" data-palette-open data-i18n-aria="a11y.search" aria-label="Abrir paleta de comandos">
+          <span data-i18n="nav.search">Buscar</span> <kbd>⌘K</kbd>
+        </button>
+        <a class="btn btn--primary" href="#pasos" data-i18n="nav.installCta">Instalar</a>
+        <button type="button" class="nav__menu" data-menu-toggle aria-expanded="false" aria-controls="nav-sheet" data-i18n-aria="a11y.menu" aria-label="Abrir menú">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M3 5h12M3 9h12M3 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="container nav__sheet" id="nav-sheet" data-nav-sheet>
+      <ul>
+        <li><a href="index.html#proyecto" data-i18n="nav.project">Proyecto</a></li>
+        <li><a href="index.html#arquitectura" data-i18n="nav.architecture">Arquitectura</a></li>
+        <li><a href="install.html" data-i18n="nav.install">Instalar</a></li>
+        <li><a href="index.html#uso" data-i18n="nav.use">Uso</a></li>
+        <li><a href="index.html#roadmap" data-i18n="nav.roadmap">Roadmap</a></li>
+        <li><a href="#" data-palette-open data-i18n="nav.searchSheet">Buscar (⌘K)</a></li>
+      </ul>
+      <label class="nav__lang nav__lang--sheet" for="site-lang-sheet">
+        <span class="label" data-i18n="nav.lang">Idioma</span>
+        <select id="site-lang-sheet" data-site-lang aria-label="Idioma">
+          <option value="es">ES · Español</option>
+          <option value="en">EN · English</option>
+          <option value="pt">PT · Português</option>
+          <option value="zh-CN">中文 · 简体</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="de">DE · Deutsch</option>
+          <option value="fr">FR · Français</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__grid">
+        <div class="reveal">
+          <div class="hero__lockup">
+            <img class="hero__mark" src="../assets/PhotoDroid_full_300.png" width="96" height="96" alt="" />
+            <div class="hero__lockup-text">
+              <div class="hero__eyebrow">
+                <span class="hero__tick" aria-hidden="true"></span>
+                <span class="label" data-i18n="installPage.eyebrow">Guía de instalación</span>
+              </div>
+              <h1 data-i18n="installPage.h1">Instalar PhotoDroid</h1>
+            </div>
+          </div>
+          <p class="hero__lede" data-i18n="installPage.lede">
+            Cuatro pasos. Al final abres la app, conectas el teléfono y ya puedes escanear apps, permisos y procesos.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#pasos" data-i18n="installPage.ctaSteps">Ver los 4 pasos</a>
+            <a class="btn btn--ghost" href="index.html" data-i18n="installPage.ctaHome">Volver al inicio</a>
+          </div>
+        </div>
+
+        <div class="code-card reveal" data-type-in="python main.py" data-i18n-aria="a11y.terminal" aria-label="Terminal de arranque">
+          <div class="code-card__bar">
+            <span>terminal · photodroid</span>
+            <span class="code-card__status">ready</span>
+          </div>
+          <pre class="code-card__body"><span class="prompt">$</span> <span data-type-target></span><span class="caret" aria-hidden="true"></span>
+<span class="cmt" data-i18n="installPage.terminalHint"># abre el dashboard y detecta el dispositivo USB</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight" id="requisitos">
+      <div class="container">
+        <div class="section__head reveal">
+          <h2 data-i18n="installPage.reqTitle">Antes de empezar</h2>
+          <p data-i18n="installPage.reqLede">Tres cosas. Si las tienes, la instalación es lineal.</p>
+        </div>
+        <div class="reveal">
+          <ul class="stack-list">
+            <li>
+              <strong data-i18n="installPage.req1t">Python 3.10+</strong>
+              <span data-i18n-html="installPage.req1d">Probado en 3.13. En la terminal: <code>python --version</code>.</span>
+            </li>
+            <li>
+              <strong data-i18n="installPage.req2t">ADB (platform-tools)</strong>
+              <span data-i18n-html="installPage.req2d">Windows suele traerlo en <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. Si no está en el <code>PATH</code>, se indica en <code>config/settings.json → adb_path</code>.</span>
+            </li>
+            <li>
+              <strong data-i18n="installPage.req3t">Android con depuración USB</strong>
+              <span data-i18n="installPage.req3d">Activa <strong>Depuración USB</strong> en Ajustes → Acerca del teléfono (varias veces en «compilación») y acepta el diálogo al conectar el cable.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pasos">
+      <div class="container">
+        <div class="section__head reveal">
+          <h2 data-i18n="install.title">Instalación</h2>
+          <p data-i18n-html="install.lede">
+            Cuatro etapas. Al final arranca con <code style="font-family:var(--font-mono);color:var(--color-accent)">python main.py</code>.
+          </p>
+        </div>
+
+        <ol class="steps">
+          <li class="reveal">
+            <span class="steps__stage" data-i18n="install.s1">1.0 · requisitos</span>
+            <div class="steps__body">
+              <h3 data-i18n="install.h1">Python y ADB</h3>
+              <p data-i18n-html="install.p1">
+                Necesitas Python 3.10 o superior y Android <strong>platform-tools</strong> (<code style="font-family:var(--font-mono);color:var(--color-accent)">adb</code>).
+                En Windows suele estar en <code style="font-family:var(--font-mono);color:var(--color-accent)">%LOCALAPPDATA%\Android\Sdk\platform-tools</code>.
+                Si no está en el <code style="font-family:var(--font-mono);color:var(--color-accent)">PATH</code>, se configura en <code style="font-family:var(--font-mono);color:var(--color-accent)">config/settings.json → adb_path</code>.
+              </p>
+            </div>
+          </li>
+
+          <li class="reveal">
+            <span class="steps__stage" data-i18n="install.s2">2.0 · entorno</span>
+            <div class="steps__body">
+              <h3 data-i18n="install.h2">Clonar e instalar dependencias</h3>
+              <p data-i18n="install.p2">Un virtualenv mantiene PySide6 aislado del sistema.</p>
+              <div class="code-card">
+                <div class="code-card__bar">
+                  <span>shell</span>
+                  <span class="code-card__status">setup</span>
+                </div>
+                <pre class="code-card__body"><span class="prompt">$</span> cd PhotonDroid
+<span class="prompt">$</span> python -m venv .venv
+<span class="prompt">$</span> .venv\Scripts\activate   <span class="cmt" data-i18n="install.c2"># Windows</span>
+<span class="prompt">$</span> pip install -r requirements.txt</pre>
+              </div>
+            </div>
+          </li>
+
+          <li class="reveal">
+            <span class="steps__stage" data-i18n="install.s3">3.0 · dispositivo</span>
+            <div class="steps__body">
+              <h3 data-i18n="install.h3">USB y depuración</h3>
+              <p data-i18n="install.p3">
+                Activa <strong>Depuración USB</strong> en el teléfono, conecta el cable
+                y acepta el diálogo de autorización. Comprueba con:
+              </p>
+              <div class="code-card">
+                <div class="code-card__bar">
+                  <span>shell</span>
+                  <span class="code-card__status">adb</span>
+                </div>
+                <pre class="code-card__body"><span class="prompt">$</span> adb devices -l
+<span class="cmt" data-i18n="install.c3"># debe aparecer una línea con state=device</span></pre>
+              </div>
+            </div>
+          </li>
+
+          <li class="reveal">
+            <span class="steps__stage" data-i18n="install.s4">4.0 · arranque</span>
+            <div class="steps__body">
+              <h3 data-i18n="install.h4">Abrir PhotoDroid</h3>
+              <p data-i18n="install.p4">
+                Lanza la app, pulsa <strong>Detect device</strong> y abre
+                <strong>Scanner</strong> para apps, permisos y procesos.
+              </p>
+              <div class="code-card">
+                <div class="code-card__bar">
+                  <span>shell</span>
+                  <span class="code-card__status">run</span>
+                </div>
+                <pre class="code-card__body"><span class="prompt">$</span> python main.py</pre>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section band" id="tras-arranque">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="label" data-i18n="installPage.afterLabel">Después del arranque</span>
+          <h2 data-i18n="installPage.afterTitle">Primer escaneo en la app</h2>
+          <p data-i18n="installPage.afterLede">
+            El flujo típico una vez está todo conectado.
+          </p>
+        </div>
+
+        <div class="split">
+          <div class="reveal">
+            <table class="spec">
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td data-i18n="installPage.a1">Conecta el Android por USB y acepta la depuración.</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td data-i18n="installPage.a2"><strong>Detect device</strong> en la cabecera → modelo, Android y serie.</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td data-i18n="installPage.a3"><strong>Scanner</strong> → Load apps · Scan permissions · Load processes.</td>
+                </tr>
+                <tr>
+                  <th scope="row">4</th>
+                  <td data-i18n="installPage.a4"><strong>Start scan</strong> en el Dashboard → recorrido completo con progreso y log.</td>
+                </tr>
+                <tr>
+                  <th scope="row">5</th>
+                  <td data-i18n="installPage.a5">Idioma en el selector de la cabecera (8 opciones).</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="reveal">
+            <p data-i18n-html="installPage.trouble1">
+              Si <code>adb devices</code> no muestra el equipo: revisa cable, depuración y el diálogo <strong>¿Permitir depuración USB?</strong>.
+            </p>
+            <p data-i18n-html="installPage.trouble2">
+              Estado <code>unauthorized</code> → acepta la autorización en el teléfono. Estado <code>offline</code> → reconecta o reinicia <code>adb</code>.
+            </p>
+            <p style="margin-top:var(--space-lg)">
+              <a class="btn btn--on-dark" href="index.html#uso" data-i18n="installPage.ctaUse">Ver cómo se usa</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="container">
+      <p class="foot__line">
+        <span class="foot__brand">
+          <img class="foot__logo" src="../assets/PhotoDroid_300.png" width="20" height="20" alt="" />
+          PhotoDroid
+        </span>
+        <span data-i18n="foot.tagline">Escaneo Android local · sin nube</span>
+        <span>
+          <a href="index.html" data-i18n="installPage.footHome">Inicio</a>
+          ·
+          <a href="../README.md" data-i18n="foot.readme">README</a>
+          ·
+          <a href="../README.md" data-i18n="foot.contribute">Clonar / contribuir</a>
+          ·
+          <a href="../LICENSE" data-i18n="foot.license">Licencia MIT</a>
+          ·
+          <a href="#" data-palette-open>⌘K</a>
+        </span>
+      </p>
+    </div>
+  </footer>
+
+  <div class="palette" data-palette hidden role="dialog" aria-modal="true" data-i18n-aria="a11y.palette" aria-label="Paleta de comandos">
+    <div class="palette__panel">
+      <input class="palette__input" type="text" data-palette-input data-i18n-placeholder="palette.placeholder" placeholder="Ir a una sección…" autocomplete="off" spellcheck="false" />
+      <ul class="palette__list" data-palette-list></ul>
+      <p class="palette__empty" data-palette-empty hidden data-i18n="palette.empty">Sin resultados.</p>
+    </div>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
