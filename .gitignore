@@ -25,6 +25,9 @@ build/
 dist/
 *.spec
 
+# GitHub Pages (build local del workflow)
+_site/
+
 # Logs
 *.log
 pip-log.txt

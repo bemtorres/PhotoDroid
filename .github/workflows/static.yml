@@ -1,28 +1,26 @@
-# Simple workflow for deploying static content to GitHub Pages
+# Deploy the PhotoDroid marketing site (_www) to GitHub Pages.
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
+    paths:
+      - "_www/**"
+      - "assets/**"
+      - "LICENSE"
+      - ".github/workflows/static.yml"
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -31,13 +29,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Build site
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp -R _www/. _site/
+          mkdir -p _site/assets
+          cp -R assets/. _site/assets/
+          cp LICENSE _site/LICENSE
+          # Source assumes _www/ sits next to assets/ and README.
+          # On Pages the site root is _site/, so rewrite parent-relative links.
+          find _site -type f \( -name '*.html' -o -name '*.js' -o -name '*.css' \) -print0 \
+            | xargs -0 sed -i \
+              -e 's|\.\./assets/|assets/|g' \
+              -e 's|\.\./README\.md|https://github.com/bemtorres/PhotoDroid|g' \
+              -e 's|\.\./LICENSE|https://github.com/bemtorres/PhotoDroid/blob/main/LICENSE|g'
+          test -f _site/index.html
+          test -f _site/install.html
+          test -f _site/assets/PhotoDroid_300.png
+          test -f _site/LICENSE
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: _site
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
