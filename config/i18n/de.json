@@ -1,0 +1,23 @@
+{
+  "app.subtitle": "Android-Sicherheit",
+  "nav.dashboard": "Dashboard",
+  "nav.scanner": "Scanner",
+  "nav.threats": "Bedrohungen",
+  "nav.apps": "Apps",
+  "nav.reports": "Berichte",
+  "nav.settings": "Einstellungen",
+  "sidebar.status": "Status",
+  "sidebar.state": "Zustand",
+  "device.waiting": "Warte auf Gerät…",
+  "device.connected": "Gerät verbunden",
+  "device.detect": "Gerät erkennen",
+  "header.title": "Sicherheits-Dashboard",
+  "header.hint": "Verbundene Geräte analysieren, diagnostizieren und bereinigen",
+  "scan.start": "Scan starten",
+  "scan.cancel": "Abbrechen",
+  "reports.title": "Berichte exportieren",
+  "settings.title": "Einstellungen",
+  "quarantine.title": "Quarantäne / Maßnahmen",
+  "modal.confirm": "Bestätigen",
+  "modal.cancel": "Abbrechen"
+}

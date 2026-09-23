@@ -1,0 +1,23 @@
+{
+  "app.subtitle": "安卓安全",
+  "nav.dashboard": "仪表盘",
+  "nav.scanner": "扫描器",
+  "nav.threats": "威胁",
+  "nav.apps": "应用",
+  "nav.reports": "报告",
+  "nav.settings": "设置",
+  "sidebar.status": "状态",
+  "sidebar.state": "阶段",
+  "device.waiting": "等待设备…",
+  "device.connected": "设备已连接",
+  "device.detect": "检测设备",
+  "header.title": "安全仪表盘",
+  "header.hint": "分析、诊断并清理已连接设备",
+  "scan.start": "开始扫描",
+  "scan.cancel": "取消",
+  "reports.title": "导出报告",
+  "settings.title": "设置",
+  "quarantine.title": "隔离 / 缓解",
+  "modal.confirm": "确认",
+  "modal.cancel": "取消"
+}

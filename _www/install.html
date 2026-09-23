@@ -156,10 +156,17 @@
             <div class="steps__body">
               <h3 data-i18n="install.h1">Python y ADB</h3>
               <p data-i18n-html="install.p1">
-                Necesitas Python 3.10 o superior y Android <strong>platform-tools</strong> (<code style="font-family:var(--font-mono);color:var(--color-accent)">adb</code>).
-                En Windows suele estar en <code style="font-family:var(--font-mono);color:var(--color-accent)">%LOCALAPPDATA%\Android\Sdk\platform-tools</code>.
-                Si no está en el <code style="font-family:var(--font-mono);color:var(--color-accent)">PATH</code>, se configura en <code style="font-family:var(--font-mono);color:var(--color-accent)">config/settings.json → adb_path</code>.
+                Necesitas Python 3.10+ y el binario <strong>adb</strong> (Android Debug Bridge, de <em>platform-tools</em>). El <strong>PATH</strong> son las carpetas donde el sistema busca <code>adb</code> al escribirlo en la terminal. Si está en el PATH, <code>adb devices</code> funciona sin más. Si no, PhotoDroid lee la ruta en <code>config/settings.json → adb_path</code> (valor por defecto <code>"adb"</code>; usa la ruta absoluta a <code>adb.exe</code> si hace falta). En Windows: <code>%LOCALAPPDATA%\Android\Sdk\platform-tools</code>.
               </p>
+              <div class="code-card">
+                <div class="code-card__bar">
+                  <span>shell · adb</span>
+                  <span class="code-card__status">check</span>
+                </div>
+                <pre class="code-card__body"><span class="prompt">$</span> adb devices
+<span class="cmt" data-i18n="install.c1"># ADB en el PATH · debe listar el equipo con state=device</span>
+<span class="prompt">$</span> <span class="cmt" data-i18n="install.c1b"># Si ADB no está en el PATH → settings.json "adb_path": "C:\\...\\adb.exe"</span></pre>
+              </div>
             </div>
           </li>
 

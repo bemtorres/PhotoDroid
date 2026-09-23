@@ -1,0 +1,23 @@
+{
+  "app.subtitle": "Android 보안",
+  "nav.dashboard": "대시보드",
+  "nav.scanner": "스캐너",
+  "nav.threats": "위협",
+  "nav.apps": "앱",
+  "nav.reports": "보고서",
+  "nav.settings": "설정",
+  "sidebar.status": "상태",
+  "sidebar.state": "단계",
+  "device.waiting": "기기 대기 중…",
+  "device.connected": "기기 연결됨",
+  "device.detect": "기기 감지",
+  "header.title": "보안 대시보드",
+  "header.hint": "연결된 기기 분석·진단·정리",
+  "scan.start": "스캔 시작",
+  "scan.cancel": "취소",
+  "reports.title": "보고서 내보내기",
+  "settings.title": "설정",
+  "quarantine.title": "격리 / 완화",
+  "modal.confirm": "확인",
+  "modal.cancel": "취소"
+}

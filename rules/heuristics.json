@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "permission_weights": {
+    "android.permission.SYSTEM_ALERT_WINDOW": 20,
+    "android.permission.BIND_ACCESSIBILITY_SERVICE": 25,
+    "android.permission.REQUEST_INSTALL_PACKAGES": 15,
+    "android.permission.MANAGE_EXTERNAL_STORAGE": 18,
+    "android.permission.READ_SMS": 18,
+    "android.permission.RECEIVE_SMS": 15,
+    "android.permission.SEND_SMS": 15,
+    "android.permission.READ_CONTACTS": 8,
+    "android.permission.READ_CALL_LOG": 12,
+    "android.permission.RECORD_AUDIO": 12,
+    "android.permission.CAMERA": 6,
+    "android.permission.READ_PHONE_STATE": 5,
+    "android.permission.PROCESS_OUTGOING_CALLS": 20,
+    "android.permission.REQUEST_DELETE_PACKAGES": 10,
+    "android.permission.QUERY_ALL_PACKAGES": 8
+  },
+  "flag_weights": {
+    "overlay": 8,
+    "accessibility": 10
+  },
+  "dangerous_count_weight": 3,
+  "system_score_factor": 0.4,
+  "cap": 100,
+  "min_finding_score": 15
+}

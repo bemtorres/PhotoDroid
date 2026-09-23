@@ -5,66 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PhotoDroid</title>
   <link rel="icon" type="image/png" href="../assets/PhotoDroid_300.png" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            surface: "#0f172a",
-            panel: "#111827",
-          },
-        },
-      },
-    };
-  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/tailwind.css" />
   <link rel="stylesheet" href="css/app.css" />
   <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 </head>
-<body class="dark">
+<body>
   <div class="flex h-screen overflow-hidden">
-    <aside class="w-60 shrink-0 border-r border-slate-700/50 bg-slate-900/70 p-4 flex flex-col gap-6">
-      <div class="flex items-center gap-3 px-2">
-        <img src="../assets/PhotoDroid_300.png" alt="" width="36" height="36" class="h-9 w-9 rounded-xl object-cover" />
-        <div>
-          <div class="font-semibold tracking-wide text-white">PhotoDroid</div>
-          <div class="text-[11px] text-slate-400" data-i18n="app.subtitle">Android Security</div>
+    <aside class="app-sidebar w-[220px] shrink-0 flex flex-col gap-5 p-3">
+      <div class="flex items-center gap-2.5 px-2 pt-1">
+        <img src="../assets/PhotoDroid_300.png" alt="" width="32" height="32" class="h-8 w-8 rounded-lg object-cover shadow-sm" />
+        <div class="min-w-0">
+          <div class="app-brand-title text-[13px] leading-tight">PhotoDroid</div>
+          <div class="app-brand-sub" data-i18n="app.subtitle">Android Security</div>
         </div>
       </div>
 
-      <nav class="flex flex-col gap-1 text-sm">
-        <button class="nav-item active flex items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-slate-300 hover:bg-slate-800/70" data-view="dashboard">
-          <span>▦</span><span data-i18n="nav.dashboard">Dashboard</span>
+      <nav class="flex flex-col gap-0.5 text-[13px]">
+        <button class="nav-item active flex items-center gap-2.5 px-2.5 py-1.5" data-view="dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span data-i18n="nav.dashboard">Dashboard</span>
         </button>
-        <button class="nav-item flex items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-slate-300 hover:bg-slate-800/70" data-view="scanner">
-          <span>◎</span><span data-i18n="nav.scanner">Scanner</span>
+        <button class="nav-item flex items-center gap-2.5 px-2.5 py-1.5" data-view="scanner">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <span data-i18n="nav.scanner">Scanner</span>
         </button>
-        <button class="nav-item flex items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-slate-300 hover:bg-slate-800/70" data-view="apps">
-          <span>▦</span><span data-i18n="nav.apps">Apps</span>
+        <button class="nav-item flex items-center gap-2.5 px-2.5 py-1.5" data-view="threats">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V7l8-4z"/><path d="M12 9v4"/><path d="M12 16h.01"/></svg>
+          <span data-i18n="nav.threats">Threats</span>
         </button>
-        <button class="nav-item flex items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-slate-300 hover:bg-slate-800/70" data-view="reports">
-          <span>≣</span><span data-i18n="nav.reports">Reports</span>
+        <button class="nav-item flex items-center gap-2.5 px-2.5 py-1.5" data-view="apps">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>
+          <span data-i18n="nav.apps">Apps</span>
+        </button>
+        <button class="nav-item flex items-center gap-2.5 px-2.5 py-1.5" data-view="reports">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h6l4 4v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+          <span data-i18n="nav.reports">Reports</span>
+        </button>
+        <button class="nav-item flex items-center gap-2.5 px-2.5 py-1.5" data-view="settings">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.2.6.8 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+          <span data-i18n="nav.settings">Settings</span>
         </button>
       </nav>
 
-      <div class="mt-auto card p-3 text-xs text-slate-400">
-        <div class="mb-1 text-slate-300 font-medium" data-i18n="sidebar.status">Status</div>
-        <div class="flex items-center gap-2">
-          <span id="conn-dot" class="h-2 w-2 rounded-full bg-slate-500"></span>
-          <span id="conn-label" data-i18n="device.waiting">Waiting for device…</span>
+      <div class="mt-auto sidebar-panel p-3 space-y-3 text-xs">
+        <div>
+          <div class="panel-label mb-1.5" data-i18n="sidebar.status">Status</div>
+          <div class="flex items-center gap-2">
+            <span id="conn-dot" class="conn-dot is-offline"></span>
+            <span id="conn-label" data-i18n="device.waiting">Waiting for device…</span>
+          </div>
+        </div>
+        <div>
+          <div class="panel-label mb-1.5" data-i18n="sidebar.state">State</div>
+          <span id="state-badge" class="state-badge">idle</span>
         </div>
       </div>
     </aside>
 
     <main class="flex-1 flex flex-col min-w-0">
-      <header class="flex items-center justify-between border-b border-slate-700/50 bg-slate-900/50 px-6 py-3">
-        <div>
-          <h1 class="text-lg font-semibold text-white" data-i18n="header.title">Security Dashboard</h1>
-          <p class="text-xs text-slate-400" data-i18n="header.hint">Analyze, diagnose and clean connected devices</p>
+      <header class="app-toolbar flex items-center justify-between gap-4 px-6 py-3">
+        <div class="min-w-0">
+          <h1 data-i18n="header.title">Security Dashboard</h1>
+          <p class="toolbar-hint" data-i18n="header.hint">Analyze, diagnose and clean connected devices</p>
         </div>
-        <div class="flex items-center gap-3">
-          <select id="lang-select" class="rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm text-slate-200 outline-none focus:border-blue-500">
+        <div class="flex items-center gap-2.5 shrink-0">
+          <select id="lang-select" class="lang-select" aria-label="Language">
             <option value="en">English</option>
             <option value="es">Español</option>
             <option value="pt">Português</option>
@@ -74,81 +82,87 @@
             <option value="de">Deutsch</option>
             <option value="fr">Français</option>
           </select>
-          <button id="btn-detect" class="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-500 transition" data-i18n="device.detect">Detect device</button>
+          <button id="btn-detect" class="btn btn-primary action-btn" data-i18n="device.detect">Detect device</button>
         </div>
       </header>
 
-      <section id="view-dashboard" class="view-panel flex-1 overflow-y-auto p-6 space-y-6">
+      <section id="view-dashboard" class="view-panel flex-1 overflow-y-auto p-6 space-y-5">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="card p-4">
-            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="card.device">Device</div>
-            <div id="device-model" class="mt-2 text-xl font-semibold text-white">—</div>
-            <div id="device-meta" class="text-sm text-slate-400">Android · USB</div>
+            <div class="card-label" data-i18n="card.device">Device</div>
+            <div id="device-model" class="card-value mt-2 text-lg">—</div>
+            <div id="device-meta" class="card-meta">Android · USB</div>
           </div>
           <div class="card p-4">
-            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="card.risk">Risk level</div>
-            <div id="risk-level" class="mt-2 text-xl font-semibold text-emerald-400" data-i18n="risk.unknown">Unknown</div>
-            <div id="risk-score" class="text-sm text-slate-400">0 / 100</div>
+            <div class="card-label" data-i18n="card.risk">Risk level</div>
+            <div id="risk-level" class="card-value mt-2 text-lg risk-low" data-i18n="risk.unknown">Unknown</div>
+            <div id="risk-score" class="card-meta">0 / 100</div>
           </div>
           <div class="card p-4">
-            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="card.threats">Threats</div>
-            <div id="threat-count" class="mt-2 text-xl font-semibold text-white">0</div>
-            <div class="text-sm text-slate-400" data-i18n="card.threatsHint">Findings in last scan</div>
+            <div class="card-label" data-i18n="card.threats">Threats</div>
+            <div id="threat-count" class="card-value mt-2 text-lg">0</div>
+            <div class="card-meta" data-i18n="card.threatsHint">Findings in last scan</div>
           </div>
         </div>
 
         <div class="card p-5">
-          <div class="mb-3 flex items-center justify-between">
-            <div class="text-sm font-medium text-slate-200" data-i18n="scan.title">System scan</div>
-            <button id="btn-scan" class="rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 transition" data-i18n="scan.start">Start scan</button>
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <div class="section-title" data-i18n="scan.title">System scan</div>
+            <div class="flex items-center gap-2">
+              <button id="btn-cancel-scan" class="btn btn-danger action-btn hidden" data-i18n="scan.cancel">Cancel</button>
+              <button id="btn-scan" class="btn btn-primary action-btn" data-i18n="scan.start">Start scan</button>
+            </div>
           </div>
           <div class="progress-track h-2 w-full">
             <div id="progress-bar" class="progress-fill"></div>
           </div>
-          <div id="progress-label" class="mt-2 text-xs text-slate-400">0%</div>
+          <div class="mt-2 flex items-center justify-between progress-meta">
+            <span id="progress-label">0%</span>
+            <span id="stage-label" data-i18n="stage.idle">Idle</span>
+          </div>
         </div>
 
         <div class="card p-5">
           <div class="mb-3 flex items-center justify-between">
-            <div class="text-sm font-medium text-slate-200" data-i18n="log.title">Activity log</div>
-            <button id="btn-clear-log" class="text-xs text-slate-400 hover:text-slate-200" data-i18n="log.clear">Clear</button>
+            <div class="section-title" data-i18n="log.title">Activity log</div>
+            <button id="btn-clear-log" class="btn btn-ghost" data-i18n="log.clear">Clear</button>
           </div>
-          <div id="log-console" class="h-52 overflow-y-auto rounded-lg bg-slate-950/70 p-3 text-slate-300"></div>
+          <div id="log-console" class="log-pane h-52 overflow-y-auto p-3"></div>
         </div>
       </section>
 
-      <section id="view-scanner" class="view-panel hidden flex-1 overflow-y-auto p-6 space-y-6">
-        <div class="flex flex-wrap items-center justify-between gap-3">
+      <section id="view-scanner" class="view-panel hidden flex-1 overflow-y-auto p-6 space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 class="text-base font-semibold text-white" data-i18n="scanner.title">Device scanners</h2>
-            <p class="text-xs text-slate-400" data-i18n="scanner.hint">Apps, permissions and live processes via ADB</p>
+            <h2 class="section-title text-base" data-i18n="scanner.title">Device scanners</h2>
+            <p class="section-hint" data-i18n="scanner.hint">Apps, permissions and live processes via ADB</p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button id="btn-load-apps" class="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500 transition" data-i18n="scanner.apps">Load apps</button>
-            <button id="btn-scan-perms" class="rounded-lg bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-500 transition" data-i18n="scanner.perms">Scan permissions</button>
-            <button id="btn-load-procs" class="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-cyan-500 transition" data-i18n="scanner.procs">Load processes</button>
+            <button id="btn-load-apps" class="btn btn-secondary action-btn" data-i18n="scanner.apps">Load apps</button>
+            <button id="btn-scan-perms" class="btn btn-secondary action-btn" data-i18n="scanner.perms">Scan permissions</button>
+            <button id="btn-load-procs" class="btn btn-secondary action-btn" data-i18n="scanner.procs">Load processes</button>
           </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div class="card p-4">
-            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="scanner.countApps">Apps</div>
-            <div id="stat-apps" class="mt-1 text-2xl font-semibold text-white">0</div>
+            <div class="card-label" data-i18n="scanner.countApps">Apps</div>
+            <div id="stat-apps" class="card-value mt-1 text-2xl">0</div>
           </div>
           <div class="card p-4">
-            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="scanner.countRisky">Risky packages</div>
-            <div id="stat-risky" class="mt-1 text-2xl font-semibold text-amber-400">0</div>
+            <div class="card-label" data-i18n="scanner.countRisky">Risky packages</div>
+            <div id="stat-risky" class="card-value mt-1 text-2xl risk-suspicious">0</div>
           </div>
           <div class="card p-4">
-            <div class="text-xs uppercase tracking-wider text-slate-400" data-i18n="scanner.countProcs">Processes</div>
-            <div id="stat-procs" class="mt-1 text-2xl font-semibold text-white">0</div>
+            <div class="card-label" data-i18n="scanner.countProcs">Processes</div>
+            <div id="stat-procs" class="card-value mt-1 text-2xl">0</div>
           </div>
         </div>
 
         <div class="card p-5">
           <div class="mb-3 flex items-center justify-between">
-            <div class="text-sm font-medium text-slate-200" data-i18n="scan.title">System scan</div>
-            <span id="scan-stage" class="text-xs text-slate-400">—</span>
+            <div class="section-title" data-i18n="scan.title">System scan</div>
+            <span id="scan-stage" class="section-hint">—</span>
           </div>
           <div class="progress-track h-2 w-full">
             <div id="progress-bar-scanner" class="progress-fill"></div>
@@ -156,55 +170,57 @@
         </div>
 
         <div class="card overflow-hidden">
-          <div class="flex border-b border-slate-700/60 bg-slate-900/60">
-            <button class="scan-tab active px-4 py-2.5 text-sm text-slate-300 border-b-2 border-blue-500" data-tab="apps" data-i18n="nav.apps">Apps</button>
-            <button class="scan-tab px-4 py-2.5 text-sm text-slate-400 hover:text-slate-200" data-tab="perms" data-i18n="scanner.permsShort">Permissions</button>
-            <button class="scan-tab px-4 py-2.5 text-sm text-slate-400 hover:text-slate-200" data-tab="procs" data-i18n="scanner.procsShort">Processes</button>
+          <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--color-rule)]">
+            <div class="segmented" role="tablist">
+              <button class="scan-tab active" role="tab" data-tab="apps" data-i18n="nav.apps">Apps</button>
+              <button class="scan-tab" role="tab" data-tab="perms" data-i18n="scanner.permsShort">Permissions</button>
+              <button class="scan-tab" role="tab" data-tab="procs" data-i18n="scanner.procsShort">Processes</button>
+            </div>
           </div>
 
           <div id="tab-apps" class="scan-tab-panel p-4">
-            <div class="overflow-auto max-h-96">
-              <table class="w-full text-left text-sm">
-                <thead class="text-xs uppercase text-slate-400 border-b border-slate-700/60">
+            <div class="table-well">
+              <table class="data-table">
+                <thead>
                   <tr>
-                    <th class="py-2 pr-4" data-i18n="table.package">Package</th>
-                    <th class="py-2 pr-4" data-i18n="table.type">Type</th>
-                    <th class="py-2" data-i18n="table.apk">APK path</th>
+                    <th data-i18n="table.package">Package</th>
+                    <th data-i18n="table.type">Type</th>
+                    <th data-i18n="table.apk">APK path</th>
                   </tr>
                 </thead>
-                <tbody id="apps-table" class="text-slate-300"></tbody>
+                <tbody id="apps-table"></tbody>
               </table>
             </div>
           </div>
 
           <div id="tab-perms" class="scan-tab-panel hidden p-4">
-            <div class="mb-3 text-xs text-slate-400" id="services-summary"></div>
-            <div class="overflow-auto max-h-96">
-              <table class="w-full text-left text-sm">
-                <thead class="text-xs uppercase text-slate-400 border-b border-slate-700/60">
+            <div class="mb-3 text-xs text-muted" id="services-summary"></div>
+            <div class="table-well">
+              <table class="data-table">
+                <thead>
                   <tr>
-                    <th class="py-2 pr-4" data-i18n="table.package">Package</th>
-                    <th class="py-2 pr-4" data-i18n="table.dangerous">Dangerous</th>
-                    <th class="py-2 pr-4" data-i18n="table.flags">Flags</th>
-                    <th class="py-2" data-i18n="table.score">Score</th>
+                    <th data-i18n="table.package">Package</th>
+                    <th data-i18n="table.dangerous">Dangerous</th>
+                    <th data-i18n="table.flags">Flags</th>
+                    <th data-i18n="table.score">Score</th>
                   </tr>
                 </thead>
-                <tbody id="perms-table" class="text-slate-300"></tbody>
+                <tbody id="perms-table"></tbody>
               </table>
             </div>
           </div>
 
           <div id="tab-procs" class="scan-tab-panel hidden p-4">
-            <div class="overflow-auto max-h-96">
-              <table class="w-full text-left text-sm">
-                <thead class="text-xs uppercase text-slate-400 border-b border-slate-700/60">
+            <div class="table-well">
+              <table class="data-table">
+                <thead>
                   <tr>
-                    <th class="py-2 pr-4">PID</th>
-                    <th class="py-2 pr-4" data-i18n="table.user">User</th>
-                    <th class="py-2" data-i18n="table.name">Name</th>
+                    <th>PID</th>
+                    <th data-i18n="table.user">User</th>
+                    <th data-i18n="table.name">Name</th>
                   </tr>
                 </thead>
-                <tbody id="procs-table" class="text-slate-300"></tbody>
+                <tbody id="procs-table"></tbody>
               </table>
             </div>
           </div>
@@ -212,29 +228,194 @@
 
         <div class="card p-5">
           <div class="mb-3 flex items-center justify-between">
-            <div class="text-sm font-medium text-slate-200" data-i18n="log.title">Activity log</div>
+            <div class="section-title" data-i18n="log.title">Activity log</div>
           </div>
-          <div id="log-console-scanner" class="h-40 overflow-y-auto rounded-lg bg-slate-950/70 p-3 text-slate-300 text-xs font-mono"></div>
+          <div id="log-console-scanner" class="log-pane h-40 overflow-y-auto p-3"></div>
+        </div>
+      </section>
+
+      <section id="view-threats" class="view-panel hidden flex-1 overflow-y-auto p-6 space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 class="section-title text-base" data-i18n="threats.title">Threat analysis</h2>
+            <p class="section-hint" data-i18n="threats.hint">Heuristic score from permissions, flags and signatures</p>
+          </div>
+          <button id="btn-reeval" class="btn btn-secondary action-btn" data-i18n="threats.reevaluate">Re-evaluate</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="card p-4">
+            <div class="card-label" data-i18n="card.risk">Risk level</div>
+            <div id="threat-risk-level" class="card-value mt-2 text-lg risk-low" data-i18n="risk.unknown">Unknown</div>
+            <div id="threat-risk-score" class="card-meta">0 / 100</div>
+          </div>
+          <div class="card p-4">
+            <div class="card-label" data-i18n="threats.findings">Findings</div>
+            <div id="threat-findings-count" class="card-value mt-2 text-lg">0</div>
+            <div class="card-meta" data-i18n="card.threatsHint">Findings in last scan</div>
+          </div>
+          <div class="card p-4">
+            <div class="card-label" data-i18n="threats.services">Active services</div>
+            <div id="threat-services" class="card-meta mt-2">—</div>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <div class="table-well max-h-[28rem] border-0 rounded-none">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.package">Package</th>
+                  <th data-i18n="table.score">Score</th>
+                  <th data-i18n="table.level">Level</th>
+                  <th data-i18n="table.reasons">Reasons</th>
+                  <th data-i18n="table.actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="threats-table"></tbody>
+            </table>
+          </div>
+          <div id="threats-empty" class="empty-state" data-i18n="threats.empty">No findings yet — run a scan first.</div>
+        </div>
+
+        <div class="card p-5">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <div class="section-title" data-i18n="quarantine.title">Quarantine / mitigation</div>
+              <div class="section-hint" data-i18n="quarantine.hint">Disable, stop or uninstall apps — always confirm. Audit log kept in config/.</div>
+            </div>
+            <button id="btn-quarantine-log" class="btn btn-secondary action-btn" data-i18n="quarantine.refreshLog">Refresh audit log</button>
+          </div>
+          <div class="table-well">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.time">Time</th>
+                  <th data-i18n="table.action">Action</th>
+                  <th data-i18n="table.package">Package</th>
+                  <th data-i18n="table.result">Result</th>
+                </tr>
+              </thead>
+              <tbody id="quarantine-log-table"></tbody>
+            </table>
+          </div>
+          <div id="quarantine-log-empty" class="empty-state" data-i18n="quarantine.empty">No quarantine actions yet.</div>
         </div>
       </section>
 
       <section id="view-apps" class="view-panel hidden flex-1 overflow-y-auto p-6">
         <div class="card p-5">
-          <div class="text-sm font-medium text-slate-200" data-i18n="apps.placeholder">Apps overview — open Scanner for full inventory</div>
+          <div class="section-title" data-i18n="apps.placeholder">Apps overview — open Scanner for full inventory</div>
         </div>
       </section>
 
-      <section id="view-reports" class="view-panel hidden flex-1 overflow-y-auto p-6">
-        <div class="card p-5">
-          <div class="text-sm font-medium text-slate-200" data-i18n="reports.placeholder">Reports — Phase 7</div>
+      <section id="view-reports" class="view-panel hidden flex-1 overflow-y-auto p-6 space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 class="section-title text-base" data-i18n="reports.title">Export reports</h2>
+            <p class="section-hint" data-i18n="reports.hint">JSON, CSV, HTML or PDF from the last scan data</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button class="btn btn-secondary action-btn btn-export" data-format="json">JSON</button>
+            <button class="btn btn-secondary action-btn btn-export" data-format="csv">CSV</button>
+            <button class="btn btn-primary action-btn btn-export" data-format="html">HTML</button>
+            <button class="btn btn-secondary action-btn btn-export" data-format="pdf">PDF</button>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <div class="table-well border-0 rounded-none">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-i18n="table.file">File</th>
+                  <th data-i18n="table.size">Size</th>
+                </tr>
+              </thead>
+              <tbody id="reports-table"></tbody>
+            </table>
+          </div>
+          <div id="reports-empty" class="empty-state" data-i18n="reports.empty">No reports yet — run a scan and export.</div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view-panel hidden flex-1 overflow-y-auto p-6 space-y-5">
+        <div>
+          <h2 class="section-title text-base" data-i18n="settings.title">Settings</h2>
+          <p class="section-hint" data-i18n="settings.hint">Language, ADB path, risk thresholds and scan options</p>
+        </div>
+
+        <div class="card p-5 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <label class="block text-xs space-y-1.5">
+              <span class="panel-label" data-i18n="settings.language">Language</span>
+              <select id="set-language" class="lang-select w-full">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="pt">Português</option>
+                <option value="zh-CN">中文</option>
+                <option value="ko">한국어</option>
+                <option value="ja">日本語</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Français</option>
+              </select>
+            </label>
+            <label class="block text-xs space-y-1.5 md:col-span-2">
+              <span class="panel-label" data-i18n="settings.adbPath">ADB path</span>
+              <input id="set-adb" class="form-input w-full" type="text" spellcheck="false" />
+            </label>
+            <label class="block text-xs space-y-1.5">
+              <span class="panel-label" data-i18n="settings.thLow">Risk low ≥</span>
+              <input id="set-th-low" class="form-input w-full" type="number" min="0" max="100" />
+            </label>
+            <label class="block text-xs space-y-1.5">
+              <span class="panel-label" data-i18n="settings.thSusp">Suspicious ≥</span>
+              <input id="set-th-susp" class="form-input w-full" type="number" min="0" max="100" />
+            </label>
+            <label class="block text-xs space-y-1.5">
+              <span class="panel-label" data-i18n="settings.thHigh">High ≥</span>
+              <input id="set-th-high" class="form-input w-full" type="number" min="0" max="100" />
+            </label>
+            <label class="flex items-center gap-2 text-xs">
+              <input id="set-inc-system" type="checkbox" class="accent-[var(--color-accent)]" />
+              <span data-i18n="settings.includeSystem">Include system apps</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs">
+              <input id="set-perm-system" type="checkbox" class="accent-[var(--color-accent)]" />
+              <span data-i18n="settings.permSystem">Permission scan for system apps</span>
+            </label>
+            <label class="block text-xs space-y-1.5">
+              <span class="panel-label" data-i18n="settings.reportsDir">Reports folder</span>
+              <input id="set-reports-dir" class="form-input w-full" type="text" spellcheck="false" />
+            </label>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btn-save-settings" class="btn btn-primary action-btn" data-i18n="settings.save">Save settings</button>
+            <span id="settings-status" class="section-hint"></span>
+          </div>
         </div>
       </section>
     </main>
+  </div>
+
+  <div id="confirm-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="section-title" data-i18n="modal.title">Confirm action</div>
+      <p id="modal-message" class="section-hint mt-2"></p>
+      <div class="mt-4 flex justify-end gap-2">
+        <button id="modal-cancel" class="btn btn-secondary" data-i18n="modal.cancel">Cancel</button>
+        <button id="modal-confirm" class="btn btn-danger" data-i18n="modal.confirm">Confirm</button>
+      </div>
+    </div>
   </div>
 
   <script src="js/i18n.js"></script>
   <script src="js/app.js"></script>
   <script src="js/dashboard.js"></script>
   <script src="js/scanner.js"></script>
+  <script src="js/threats.js"></script>
+  <script src="js/quarantine.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/settings.js"></script>
 </body>
 </html>

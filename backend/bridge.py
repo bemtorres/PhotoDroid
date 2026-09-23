@@ -3,16 +3,23 @@ from pathlib import Path
 
 from PySide6.QtCore import QObject, Signal, Slot
 
+from backend.i18n import I18n
+from backend.quarantine import QuarantineManager
+from backend.reports import ReportBuilder
+from backend.threat_engine import ThreatEngine
 from backend.workers import (
     AppListWorker,
     DetectDeviceWorker,
+    ExportReportWorker,
     FullScanWorker,
     PermissionScanWorker,
     ProcessListWorker,
+    QuarantineWorker,
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SETTINGS_PATH = BASE_DIR / "config" / "settings.json"
+RULES_DIR = BASE_DIR / "rules"
 
 
 def load_settings() -> dict:
@@ -21,6 +28,13 @@ def load_settings() -> dict:
             return json.load(f)
     except (OSError, json.JSONDecodeError):
         return {"language": "en", "theme": "dark"}
+
+
+def save_settings(data: dict) -> None:
+    SETTINGS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(SETTINGS_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        f.write("\n")
 
 
 class Bridge(QObject):
@@ -34,9 +48,16 @@ class Bridge(QObject):
     permissionsReady = Signal("QVariant")
     servicesReady = Signal("QVariant")
     processesReady = Signal("QVariant")
+    threatsReady = Signal("QVariant")
     scanFinished = Signal("QVariant")
     scanError = Signal(str)
     scanStage = Signal(str)
+    quarantineReady = Signal("QVariant")
+    quarantineError = Signal(str)
+    quarantineLogReady = Signal("QVariant")
+    reportReady = Signal("QVariant")
+    reportError = Signal(str)
+    settingsSaved = Signal("QVariant")
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -44,14 +65,27 @@ class Bridge(QObject):
         self._progress = 0
         self.current_serial: str | None = None
         self._last_packages: list[str] = []
+        self._last_apps: list[dict] = []
+        self._last_permissions: list[dict] = []
+        self._last_services: dict = {}
+        self._last_threats: dict = {}
+        self._last_device: dict = {}
+        self._last_processes: list[dict] = []
+        self._last_summary: dict = {}
         self._detect_worker: DetectDeviceWorker | None = None
         self._apps_worker: AppListWorker | None = None
         self._perms_worker: PermissionScanWorker | None = None
         self._procs_worker: ProcessListWorker | None = None
         self._scan_worker: FullScanWorker | None = None
+        self._quarantine_worker: QuarantineWorker | None = None
+        self._report_worker: ExportReportWorker | None = None
+        self._i18n = I18n(language=self.settings.get("language", "en"))
 
     def _adb_path(self) -> str:
         return self.settings.get("adb_path", "adb")
+
+    def _thresholds(self) -> dict:
+        return dict(self.settings.get("risk_thresholds") or {})
 
     @Slot(result=str)
     def ping(self) -> str:
@@ -66,11 +100,48 @@ class Bridge(QObject):
         return json.dumps(
             {
                 "name": "PhotoDroid",
-                "version": "0.1.0",
+                "version": "0.2.0",
                 "language": self.settings.get("language", "en"),
+                "phase": 9,
             },
             ensure_ascii=False,
         )
+
+    @Slot(result=str)
+    def getI18nBundle(self) -> str:
+        lang = self.settings.get("language", "en")
+        return json.dumps(
+            {"language": self._i18n.normalize(lang), "strings": self._i18n.bundle(lang)},
+            ensure_ascii=False,
+        )
+
+    @Slot(str, result=str)
+    def saveSettings(self, raw: str) -> str:
+        try:
+            incoming = json.loads(raw) if raw else {}
+            if not isinstance(incoming, dict):
+                raise ValueError("settings must be an object")
+            merged = dict(self.settings)
+            for key in (
+                "language",
+                "adb_path",
+                "theme",
+                "risk_thresholds",
+                "scan",
+                "reports",
+            ):
+                if key in incoming:
+                    merged[key] = incoming[key]
+            save_settings(merged)
+            self.settings = merged
+            self._i18n = I18n(language=self.settings.get("language", "en"))
+            self.log.emit("[settings] guardado en config/settings.json")
+            self.settingsSaved.emit(self.settings)
+            self.languageChanged.emit(self.settings.get("language", "en"))
+            return json.dumps({"ok": True, "settings": self.settings}, ensure_ascii=False)
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            self.log.emit(f"[settings] error: {exc}")
+            return json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False)
 
     @Slot(result=str)
     def detectDevice(self) -> str:
@@ -79,9 +150,10 @@ class Bridge(QObject):
 
         self.stateChanged.emit("detecting")
         self.progress.emit(15)
-        self.log.emit("[adb] buscando dispositivos…")
+        self.log.emit(f"[adb] buscando dispositivos… (adb_path={self._adb_path()})")
 
         self._detect_worker = DetectDeviceWorker(adb_path=self._adb_path())
+        self._detect_worker.log.connect(self.log)
         self._detect_worker.succeeded.connect(self._on_device_found)
         self._detect_worker.failed.connect(self._on_device_error)
         self._detect_worker.finished.connect(
@@ -92,7 +164,9 @@ class Bridge(QObject):
 
     def _on_device_found(self, info: dict) -> None:
         self.progress.emit(100)
+        self.stateChanged.emit("idle")
         self.current_serial = info.get("serial")
+        self._last_device = dict(info)
         self.log.emit(
             f"[device] {info.get('model', '?')} · Android {info.get('android', '?')} · {info.get('serial', '?')}"
         )
@@ -102,6 +176,7 @@ class Bridge(QObject):
 
     def _on_device_error(self, reason: str) -> None:
         self.progress.emit(100)
+        self.stateChanged.emit("idle")
         self.current_serial = None
         self.log.emit(f"[device] error: {reason}")
         self.deviceError.emit(reason)
@@ -128,6 +203,7 @@ class Bridge(QObject):
     def _on_apps(self, apps: list) -> None:
         self.progress.emit(100)
         self.stateChanged.emit("idle")
+        self._last_apps = list(apps)
         self._last_packages = [a.get("package", "") for a in apps if a.get("package")]
         self.log.emit(f"[apps] {len(apps)} aplicaciones")
         self.appsReady.emit(apps)
@@ -153,9 +229,12 @@ class Bridge(QObject):
             adb_path=self._adb_path(),
             serial=self.current_serial,
             packages=packages,
+            thresholds=self._thresholds(),
+            apps=self._last_apps,
         )
         self._perms_worker.log.connect(self.log)
         self._perms_worker.progress.connect(self.progress)
+        self._perms_worker.threatsReady.connect(self._on_threats)
         self._perms_worker.succeeded.connect(self._on_permissions)
         self._perms_worker.failed.connect(self._on_scan_error)
         self._perms_worker.finished.connect(lambda: self._cleanup("_perms_worker"))
@@ -163,11 +242,159 @@ class Bridge(QObject):
         return json.dumps({"started": True, "packages": len(packages)})
 
     def _on_permissions(self, results: list, services: dict) -> None:
-        self.progress.emit(100)
-        self.stateChanged.emit("idle")
+        if not self._worker_running("_scan_worker"):
+            self.progress.emit(100)
+            self.stateChanged.emit("idle")
+        self._last_permissions = list(results)
+        self._last_services = dict(services or {})
         self.log.emit(f"[perms] {len(results)} paquetes analizados")
         self.permissionsReady.emit(results)
         self.servicesReady.emit(services)
+
+    def _on_threats(self, report: dict) -> None:
+        self._last_threats = dict(report or {})
+        self.log.emit(
+            f"[threat] nivel={report.get('risk_level')} · "
+            f"score={report.get('risk_score')} · "
+            f"hallazgos={report.get('threat_count')}"
+        )
+        self.threatsReady.emit(report)
+
+    @Slot(result=str)
+    def reevaluateThreats(self) -> str:
+        if not self._last_permissions and not self._last_apps:
+            self.scanError.emit("no_data")
+            return json.dumps({"started": False, "reason": "no_data"})
+
+        engine = ThreatEngine(RULES_DIR, thresholds=self._thresholds())
+        report = engine.evaluate(
+            apps=self._last_apps,
+            permissions=self._last_permissions,
+            services=self._last_services,
+        )
+        self._on_threats(report)
+        return json.dumps({"started": True, "threats": report.get("threat_count", 0)})
+
+    @Slot(str, str, bool, result=str)
+    def quarantineAction(self, action: str, package: str, confirmed: bool) -> str:
+        if self._quarantine_worker and self._quarantine_worker.isRunning():
+            return json.dumps({"started": False, "reason": "already_running"})
+        if not confirmed:
+            self.quarantineError.emit("confirmation_required")
+            return json.dumps({"started": False, "reason": "confirmation_required"})
+
+        system = None
+        for app in self._last_apps:
+            if app.get("package") == package:
+                system = bool(app.get("system"))
+                break
+
+        self.stateChanged.emit("quarantining")
+        self.log.emit(f"[quarantine] solicitado {action} · {package}")
+        self._quarantine_worker = QuarantineWorker(
+            adb_path=self._adb_path(),
+            serial=self.current_serial,
+            action=action,
+            package=package,
+            system=system,
+            apps=self._last_apps,
+        )
+        self._quarantine_worker.log.connect(self.log)
+        self._quarantine_worker.succeeded.connect(self._on_quarantine_ok)
+        self._quarantine_worker.failed.connect(self._on_quarantine_err)
+        self._quarantine_worker.finished.connect(lambda: self._cleanup("_quarantine_worker"))
+        self._quarantine_worker.start()
+        return json.dumps({"started": True})
+
+    @Slot(result=str)
+    def listQuarantineLog(self) -> str:
+        try:
+            manager = QuarantineManager()
+            rows = manager.list_audit(limit=50)
+            self.quarantineLogReady.emit(rows)
+            return json.dumps({"ok": True, "count": len(rows), "entries": rows}, ensure_ascii=False)
+        except Exception as exc:  # noqa: BLE001
+            self.quarantineError.emit(f"unexpected: {exc}")
+            return json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False)
+
+    def _on_quarantine_ok(self, entry: dict) -> None:
+        self.progress.emit(100)
+        self.stateChanged.emit("idle")
+        self.quarantineReady.emit(entry)
+        self.log.emit(f"[quarantine] OK · {entry.get('action')} · {entry.get('package')}")
+
+    def _on_quarantine_err(self, reason: str) -> None:
+        self.progress.emit(100)
+        self.stateChanged.emit("idle")
+        self.quarantineError.emit(reason)
+        self.log.emit(f"[quarantine] error: {reason}")
+
+    @Slot(str, result=str)
+    def exportReport(self, fmt: str) -> str:
+        if self._report_worker and self._report_worker.isRunning():
+            return json.dumps({"started": False, "reason": "already_running"})
+
+        if not self._last_apps and not self._last_threats and not self._last_device:
+            self.reportError.emit("no_data")
+            return json.dumps({"started": False, "reason": "no_data"})
+
+        output_dir = str((self.settings.get("reports") or {}).get("output_dir") or "reports")
+        language = str(self.settings.get("language") or "en")
+        payload = ReportBuilder(output_dir).build_payload(
+            device=self._last_device,
+            apps=self._last_apps,
+            permissions=self._last_permissions,
+            processes=self._last_processes,
+            threats=self._last_threats,
+            services=self._last_services,
+            summary=self._last_summary,
+            language=language,
+        )
+
+        self.stateChanged.emit("exporting")
+        self.log.emit(f"[report] preparando {fmt}…")
+        self._report_worker = ExportReportWorker(fmt=fmt, payload=payload, output_dir=output_dir)
+        self._report_worker.log.connect(self.log)
+        self._report_worker.succeeded.connect(self._on_report_ok)
+        self._report_worker.failed.connect(self._on_report_err)
+        self._report_worker.finished.connect(lambda: self._cleanup("_report_worker"))
+        self._report_worker.start()
+        return json.dumps({"started": True})
+
+    @Slot(result=str)
+    def listReports(self) -> str:
+        output_dir = str((self.settings.get("reports") or {}).get("output_dir") or "reports")
+        base = Path(output_dir)
+        if not base.is_absolute():
+            base = BASE_DIR / base
+        rows: list[dict] = []
+        if base.is_dir():
+            for path in sorted(base.glob("informe_*"), key=lambda p: p.stat().st_mtime, reverse=True):
+                try:
+                    st = path.stat()
+                    rows.append(
+                        {
+                            "filename": path.name,
+                            "path": str(path),
+                            "size": st.st_size,
+                            "mtime": st.st_mtime,
+                        }
+                    )
+                except OSError:
+                    continue
+        return json.dumps({"ok": True, "reports": rows[:50]}, ensure_ascii=False)
+
+    def _on_report_ok(self, info: dict) -> None:
+        self.progress.emit(100)
+        self.stateChanged.emit("idle")
+        self.reportReady.emit(info)
+        self.log.emit(f"[report] OK · {info.get('filename')}")
+
+    def _on_report_err(self, reason: str) -> None:
+        self.progress.emit(100)
+        self.stateChanged.emit("idle")
+        self.reportError.emit(reason)
+        self.log.emit(f"[report] error: {reason}")
 
     @Slot(result=str)
     def listProcesses(self) -> str:
@@ -187,8 +414,10 @@ class Bridge(QObject):
         return json.dumps({"started": True})
 
     def _on_processes(self, processes: list) -> None:
-        self.progress.emit(100)
-        self.stateChanged.emit("idle")
+        if not self._worker_running("_scan_worker"):
+            self.progress.emit(100)
+            self.stateChanged.emit("idle")
+        self._last_processes = list(processes)
         self.log.emit(f"[proc] {len(processes)} procesos")
         self.processesReady.emit(processes)
 
@@ -209,31 +438,54 @@ class Bridge(QObject):
             serial=self.current_serial,
             include_system_apps=include_system,
             permission_scan_system=permission_scan_system,
+            thresholds=self._thresholds(),
         )
         self._scan_worker.log.connect(self.log)
         self._scan_worker.progress.connect(self.progress)
         self._scan_worker.stage.connect(self.scanStage)
         self._scan_worker.appsReady.connect(self._on_scan_apps)
         self._scan_worker.permissionsReady.connect(self._on_permissions)
+        self._scan_worker.threatsReady.connect(self._on_threats)
         self._scan_worker.processesReady.connect(self._on_processes)
         self._scan_worker.succeeded.connect(self._on_scan_done)
         self._scan_worker.failed.connect(self._on_scan_error)
-        self._scan_worker.finished.connect(lambda: self._cleanup("_scan_worker"))
+        self._scan_worker.finished.connect(self._on_scan_worker_finished)
         self._scan_worker.start()
         return json.dumps({"started": True})
 
+    @Slot(result=str)
+    def cancelScan(self) -> str:
+        worker = self._scan_worker
+        if worker and worker.isRunning():
+            worker.cancel()
+            self.log.emit("[scan] cancelación solicitada…")
+            return json.dumps({"cancelled": True})
+        return json.dumps({"cancelled": False, "reason": "not_running"})
+
+    def _on_scan_worker_finished(self) -> None:
+        worker = self._scan_worker
+        was_cancelled = bool(worker and getattr(worker, "_cancelled", False))
+        if was_cancelled:
+            self.progress.emit(100)
+            self.stateChanged.emit("idle")
+            self.log.emit("[scan] cancelado")
+        self._cleanup("_scan_worker")
+
     def _on_scan_apps(self, apps: list) -> None:
+        self._last_apps = list(apps)
         self._last_packages = [a.get("package", "") for a in apps if a.get("package")]
         self.appsReady.emit(apps)
 
     def _on_scan_done(self, summary: dict) -> None:
         self.progress.emit(100)
         self.stateChanged.emit("idle")
+        self._last_summary = dict(summary or {})
         self.log.emit(
             f"[scan] OK · apps={summary.get('apps')} · "
             f"perms={summary.get('packages_scanned')} · "
             f"riesgo={summary.get('apps_with_dangerous')} · "
-            f"procs={summary.get('processes')}"
+            f"procs={summary.get('processes')} · "
+            f"nivel={summary.get('risk_level', '?')}"
         )
         self.scanFinished.emit(summary)
 

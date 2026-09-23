@@ -1,0 +1,23 @@
+{
+  "app.subtitle": "Sécurité Android",
+  "nav.dashboard": "Tableau de bord",
+  "nav.scanner": "Scanner",
+  "nav.threats": "Menaces",
+  "nav.apps": "Applications",
+  "nav.reports": "Rapports",
+  "nav.settings": "Réglages",
+  "sidebar.status": "État",
+  "sidebar.state": "État",
+  "device.waiting": "En attente d'un appareil…",
+  "device.connected": "Appareil connecté",
+  "device.detect": "Détecter l'appareil",
+  "header.title": "Tableau de bord sécurité",
+  "header.hint": "Analyser, diagnostiquer et nettoyer les appareils connectés",
+  "scan.start": "Lancer l'analyse",
+  "scan.cancel": "Annuler",
+  "reports.title": "Exporter des rapports",
+  "settings.title": "Réglages",
+  "quarantine.title": "Quarantaine / atténuation",
+  "modal.confirm": "Confirmer",
+  "modal.cancel": "Annuler"
+}

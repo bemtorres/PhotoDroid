@@ -38,11 +38,11 @@ class DeviceManager:
         self.adb = adb or AdbManager()
 
     def list_entries(self) -> list[AdbDeviceEntry]:
-        self.adb.start_server()
         return self.adb.list_devices()
 
-    def get_active(self) -> DeviceInfo | None:
-        entries = self.list_entries()
+    def get_active(self, entries: list[AdbDeviceEntry] | None = None) -> DeviceInfo | None:
+        if entries is None:
+            entries = self.list_entries()
         entry = self.adb.first_online(entries)
         if not entry:
             return None

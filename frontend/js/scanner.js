@@ -13,14 +13,14 @@ function renderApps(apps) {
   tbody.innerHTML = apps
     .map(
       (app) => `
-    <tr class="border-b border-slate-800/70 hover:bg-slate-800/30">
-      <td class="py-2 pr-4 font-mono text-xs text-slate-200">${escapeHtml(app.package)}</td>
-      <td class="py-2 pr-4">
-        <span class="rounded px-2 py-0.5 text-xs ${app.system ? "bg-slate-700 text-slate-300" : "bg-blue-900/60 text-blue-300"}">
+    <tr>
+      <td class="cell-mono">${escapeHtml(app.package)}</td>
+      <td>
+        <span class="chip ${app.system ? "chip-neutral" : "chip-accent"}">
           ${app.system ? "system" : "user"}
         </span>
       </td>
-      <td class="py-2 text-xs text-slate-500 font-mono">${escapeHtml(app.apk_path || "—")}</td>
+      <td class="cell-mono" style="color: var(--color-muted)">${escapeHtml(app.apk_path || "—")}</td>
     </tr>`
     )
     .join("");
@@ -36,14 +36,13 @@ function renderPermissions(results, services) {
         if (row.overlay) flags.push("overlay");
         if (row.accessibility) flags.push("a11y");
         const score = row.risk_score || 0;
-        const scoreClass =
-          score >= 50 ? "text-red-400" : score >= 20 ? "text-amber-400" : "text-emerald-400";
+        const scoreClass = score >= 50 ? "score-high" : score >= 20 ? "score-mid" : "score-ok";
         return `
-      <tr class="border-b border-slate-800/70 hover:bg-slate-800/30">
-        <td class="py-2 pr-4 font-mono text-xs text-slate-200">${escapeHtml(row.package)}</td>
-        <td class="py-2 pr-4 text-xs">${escapeHtml((row.labels || row.dangerous || []).join(", ") || "—")}</td>
-        <td class="py-2 pr-4 text-xs text-slate-400">${escapeHtml(flags.join(" · ") || "—")}</td>
-        <td class="py-2 font-semibold ${scoreClass}">${score}</td>
+      <tr>
+        <td class="cell-mono">${escapeHtml(row.package)}</td>
+        <td>${escapeHtml((row.labels || row.dangerous || []).join(", ") || "—")}</td>
+        <td>${escapeHtml(flags.join(" · ") || "—")}</td>
+        <td class="cell-strong ${scoreClass}">${score}</td>
       </tr>`;
       })
       .join("");
@@ -72,10 +71,10 @@ function renderProcesses(processes) {
   tbody.innerHTML = processes
     .map(
       (p) => `
-    <tr class="border-b border-slate-800/70 hover:bg-slate-800/30">
-      <td class="py-2 pr-4 font-mono text-xs text-slate-400">${escapeHtml(p.pid)}</td>
-      <td class="py-2 pr-4 text-xs text-slate-400">${escapeHtml(p.user || "—")}</td>
-      <td class="py-2 font-mono text-xs text-slate-200">${escapeHtml(p.name)}</td>
+    <tr>
+      <td class="cell-mono" style="color: var(--color-muted)">${escapeHtml(p.pid)}</td>
+      <td>${escapeHtml(p.user || "—")}</td>
+      <td class="cell-mono">${escapeHtml(p.name)}</td>
     </tr>`
     )
     .join("");
@@ -83,12 +82,7 @@ function renderProcesses(processes) {
 
 function showScanTab(name) {
   document.querySelectorAll(".scan-tab").forEach((tab) => {
-    const active = tab.dataset.tab === name;
-    tab.classList.toggle("border-b-2", active);
-    tab.classList.toggle("border-blue-500", active);
-    tab.classList.toggle("active", active);
-    tab.classList.toggle("text-slate-300", active);
-    tab.classList.toggle("text-slate-400", !active);
+    tab.classList.toggle("active", tab.dataset.tab === name);
   });
   document.querySelectorAll(".scan-tab-panel").forEach((panel) => panel.classList.add("hidden"));
   const target = document.getElementById(`tab-${name}`);
@@ -119,26 +113,27 @@ function bindScanSignals() {
   });
 
   bridge.scanStage.connect((stage) => {
-    const el = document.getElementById("scan-stage");
-    if (el) el.textContent = stage;
+    UI.setStage(stage);
   });
 
   bridge.scanFinished.connect((summary) => {
     UI.setProgress(100);
-    const el = document.getElementById("scan-stage");
-    if (el) el.textContent = "done";
+    UI.setStage("done");
     if (summary) {
       UI.setStat("stat-apps", summary.apps || 0);
       UI.setStat("stat-risky", summary.apps_with_dangerous || 0);
       UI.setStat("stat-procs", summary.processes || 0);
-      const risk = document.getElementById("risk-count") || document.getElementById("threat-count");
-      if (risk) risk.textContent = String(summary.apps_with_dangerous || 0);
+      UI.setStat("threat-count", summary.threat_count ?? summary.apps_with_dangerous ?? 0);
+      if (summary.risk_level) {
+        UI.setRisk(summary.risk_level, summary.risk_score ?? 0);
+      }
     }
     UI.log("[ui] escaneo completo finalizado");
   });
 
   bridge.scanError.connect((reason) => {
     UI.setProgress(100);
+    UI.setState("idle");
     UI.log(`[ui] scan error: ${reason}`);
   });
 }

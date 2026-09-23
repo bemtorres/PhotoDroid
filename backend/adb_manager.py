@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -38,13 +39,23 @@ class AdbDeviceEntry:
 
 COMMON_ADB_PATHS = (
     Path(os.environ.get("LOCALAPPDATA", "")) / "Android" / "Sdk" / "platform-tools" / "adb.exe",
+    Path(os.environ.get("LOCALAPPDATA", "")) / "Android" / "Sdk" / "platform-tools" / "adb",
     Path(os.environ.get("ANDROID_HOME", "")) / "platform-tools" / "adb.exe",
+    Path(os.environ.get("ANDROID_HOME", "")) / "platform-tools" / "adb",
     Path(os.environ.get("ANDROID_SDK_ROOT", "")) / "platform-tools" / "adb.exe",
+    Path(os.environ.get("ANDROID_SDK_ROOT", "")) / "platform-tools" / "adb",
     Path.home() / "Library" / "Android" / "sdk" / "platform-tools" / "adb",
     Path("/usr/bin/adb"),
     Path("/usr/local/bin/adb"),
     Path.home() / "Android" / "Sdk" / "platform-tools" / "adb",
 )
+
+
+def _run_kwargs() -> dict:
+    kwargs: dict = {}
+    if sys.platform == "win32":
+        kwargs["creationflags"] = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    return kwargs
 
 
 class AdbManager:
@@ -57,9 +68,9 @@ class AdbManager:
         if self._resolved:
             return self._resolved
 
-        candidate = self.adb_path
-        if candidate and candidate != "adb":
-            p = Path(candidate)
+        candidate = (self.adb_path or "").strip()
+        if candidate and candidate.lower() not in {"adb", "adb.exe"}:
+            p = Path(candidate).expanduser()
             if p.is_file():
                 self._resolved = str(p)
                 return self._resolved
@@ -74,11 +85,16 @@ class AdbManager:
             return self._resolved
 
         for path in COMMON_ADB_PATHS:
-            if path and path.is_file():
-                self._resolved = str(path)
-                return self._resolved
+            try:
+                if path and str(path) not in {".", ""} and path.is_file():
+                    self._resolved = str(path)
+                    return self._resolved
+            except OSError:
+                continue
 
-        raise AdbError("ADB not found. Install Android platform-tools or set adb_path in config/settings.json")
+        raise AdbError(
+            "ADB not found. Install Android platform-tools or set adb_path in config/settings.json"
+        )
 
     def run(self, *args: str, timeout: float | None = None) -> AdbResult:
         exe = self.resolve()
@@ -91,11 +107,17 @@ class AdbManager:
                 encoding="utf-8",
                 errors="replace",
                 timeout=timeout or self.timeout,
+                **_run_kwargs(),
             )
         except FileNotFoundError as exc:
+            self._resolved = None
             raise AdbError(f"ADB executable not found: {exe}") from exc
         except subprocess.TimeoutExpired:
-            return AdbResult(ok=False, stderr=f"adb timed out after {timeout or self.timeout}s", code=124)
+            return AdbResult(
+                ok=False,
+                stderr=f"adb timed out after {timeout or self.timeout}s",
+                code=124,
+            )
 
         stdout = (proc.stdout or "").strip()
         stderr = (proc.stderr or "").strip()
@@ -112,9 +134,16 @@ class AdbManager:
 
     def list_devices(self) -> list[AdbDeviceEntry]:
         result = self.run("devices", "-l")
-        if not result.ok:
+        if not result.ok and not result.stdout:
             raise AdbError(result.stderr or "adb devices failed")
-        return self._parse_devices(result.stdout)
+        entries = self._parse_devices(result.stdout)
+        if not entries:
+            self.run("start-server", timeout=20.0)
+            result = self.run("devices", "-l")
+            if not result.ok and not result.stdout:
+                raise AdbError(result.stderr or "adb devices failed")
+            entries = self._parse_devices(result.stdout)
+        return entries
 
     def shell(self, command: str, serial: str | None = None, timeout: float | None = None) -> AdbResult:
         args: list[str] = []
@@ -130,10 +159,14 @@ class AdbManager:
             line = line.strip()
             if not line or line.startswith("List of devices"):
                 continue
+            if line.startswith("*"):
+                continue
             parts = line.split()
             if len(parts) < 2:
                 continue
             serial, state = parts[0], parts[1]
+            if serial == "adb" and state == "devices":
+                continue
             fields: dict[str, str] = {}
             for token in parts[2:]:
                 if ":" in token:

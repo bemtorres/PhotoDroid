@@ -2,7 +2,7 @@
 
 Herramienta de **escritorio** para **analizar, diagnosticar y limpiar de forma controlada** dispositivos Android conectados por USB (ADB), con interfaz tipo dashboard de ciberseguridad.
 
-> Estado actual: **MVP Fases 1–3** (ventana + detección de dispositivo + scanners de apps/permisos/procesos).
+> Estado actual: **Fases 1–9** (ventana, detección, scanners, UX en vivo, motor de amenazas, cuarentena, reportes, ajustes/i18n y empaquetado).
 
 ---
 
@@ -14,7 +14,10 @@ PhotoDroid conecta tu PC a un teléfono Android mediante **ADB** y te muestra, e
 - **Aplicaciones instaladas**: paquete, tipo (usuario/sistema), ruta APK.
 - **Permisos peligrosos**: SMS, Accessibility, Overlay, instalación de apps, etc., con puntuación de riesgo.
 - **Procesos activos** en tiempo real.
-- (Previsto) Motor de amenazas, cuarentena/limpieza y reportes.
+- **Motor de amenazas**: puntuación de riesgo 0–100 con hallazgos explicables (permisos, flags, firmas).
+- **Cuarentena / mitigación**: deshabilitar, detener o desinstalar apps de terceros con confirmación y auditoría.
+- **Reportes**: exporta JSON, CSV, HTML y PDF del último análisis.
+- **Ajustes**: idioma, ruta ADB, umbrales de riesgo y opciones de escaneo.
 
 No usa base de datos: la configuración y las reglas viven en **JSON**.
 
@@ -27,12 +30,13 @@ No usa base de datos: la configuración y las reglas viven en **JSON**.
 │  Ventana PySide6 (QWebEngineView)                       │
 │  ┌────────────────────────────────────────────────────┐  │
 │  │  Frontend: HTML + Tailwind + JS (estilo HeroUI)    │  │
-│  │  vistas: Dashboard · Scanner · Apps · Reports       │  │
+│  │  vistas: Dashboard · Scanner · Threats · Apps · Reports│
 │  └──────────────▲──────────────────────┬──────────────┘  │
 │                 │ QWebChannel          │ llamadas JS     │
 │  ┌──────────────┴──────────────────────▼──────────────┐  │
 │  │  Bridge Python (señales/Slots)                     │  │
 │  │  adb · device · apps · permissions · processes     │  │
+│  │  threat_engine · cancel / re-evaluate              │  │
 │  │  Workers en QThread (la UI nunca se congela)       │  │
 │  └───────────────────────┬────────────────────────────┘  │
 └──────────────────────────┼───────────────────────────────┘
@@ -87,9 +91,78 @@ source .venv/bin/activate
 # 3. Dependencias
 pip install -r requirements.txt
 
-# 4. ADB en PATH (o editar config/settings.json → "adb_path")
+# 4. Comprobar ADB (ver abajo)
 adb devices
 ```
+
+### 4. ADB en PATH o `adb_path`
+
+PhotoDroid no “inventa” el teléfono: usa el binario **`adb`** (Android Debug Bridge) para hablar con el equipo por USB. Necesitas que el sistema (o la app) sepa **dónde está ese ejecutable**.
+
+#### Qué es el PATH
+
+El `PATH` es la lista de carpetas donde Windows/Linux/macOS buscan un comando cuando escribes `adb` en la terminal.
+
+- Si ADB está en el PATH → basta `adb devices`
+- Si **no** está → la terminal responde algo como *«adb no se reconoce como un comando interno…»* y PhotoDroid puede fallar al detectar el dispositivo
+
+#### Opción A — ADB en el PATH (recomendada)
+
+1. Descarga/instala [Android platform-tools](https://developer.android.com/tools/releases/platform-tools) (o usa el de Android Studio).
+2. Ruta habitual en Windows:
+   `C:\Users\<tu-usuario>\AppData\Local\Android\Sdk\platform-tools`
+3. Comprueba desde una **terminal nueva**:
+
+```bash
+adb version
+adb devices
+```
+
+- `adb version` imprime la versión → el PATH está bien.
+- `adb devices` debe listar tu equipo con `device` (no vacío, no `unauthorized`).
+
+Si no funciona, añade esa carpeta a las **variables de entorno → Path** del sistema y abre la terminal otra vez.
+
+#### Opción B — Ruta completa en PhotoDroid (sin tocar el PATH)
+
+Si no quieres tocar el PATH, PhotoDroid acepta la ruta al ejecutable en `config/settings.json`:
+
+```json
+{
+  "adb_path": "adb"
+}
+```
+
+| Valor | Cuándo sirve |
+|---|---|
+| `"adb"` (por defecto) | ADB ya está en el PATH |
+| Ruta absoluta | ADB **no** está en el PATH |
+
+Ejemplo en Windows:
+
+```json
+{
+  "adb_path": "C:\\Users\\tu-usuario\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe"
+}
+```
+
+> En JSON hay que escapar las barreras invertidas (`\\`).
+
+La app lee `settings.json → adb_path` y se lo pasa a cada worker de escaneo. Si tampoco encuentra ahí el binario, prueba rutas comunes o muestra: *«ADB not found… set adb_path»*.
+
+#### ¿Qué significa `adb devices`?
+
+```text
+List of devices attached
+XXXXXXXX    device
+```
+
+| Estado | Significado |
+|---|---|
+| `device` | Listo: PhotoDroid puede escanear |
+| vacío | Cable, depuración USB o driver |
+| `unauthorized` | Acepta el diálogo en el móvil |
+| `offline` | Reconecta o reinicia `adb kill-server && adb start-server` |
 
 ---
 
@@ -107,8 +180,11 @@ python main.py
    - **Load apps** → inventario de paquetes
    - **Scan permissions** → permisos peligrosos + Accessibility/Overlay
    - **Load processes** → procesos activos
-4. O bien **Start scan** en el Dashboard → escaneo completo (apps → permisos → procesos) con barra de progreso y log.
-5. Cambia el idioma en el selector de la cabecera (en, es, pt, zh-CN, ko, ja, de, fr).
+3. O bien **Start scan** en el Dashboard → escaneo completo (apps → permisos → amenazas → procesos) con barra de progreso, etapas, **Cancel** y log.
+4. Abre **Threats** → score de riesgo, hallazgos y servicios activos (A11y / Overlay); **Re-evaluate** recalcula con los últimos datos en caché. Desde la tabla puedes **Stop / Disable / Uninstall** (siempre con modal de confirmación) y ver la auditoría.
+5. Abre **Reports** → exporta el último análisis a **JSON / CSV / HTML / PDF**.
+6. Abre **Settings** → idioma, `adb_path`, umbrales de riesgo y opciones de escaneo → **Save settings**.
+7. Cambia el idioma en el selector de la cabecera (en, es, pt, zh-CN, ko, ja, de, fr).
 
 ---
 
@@ -127,19 +203,31 @@ PhotonDroid/
 │   ├── app_scanner.py          # Apps instaladas
 │   ├── permission_scanner.py   # Permisos y servicios peligrosos
 │   ├── process_scanner.py      # Procesos activos
-│   └── workers.py              # QThread workers
+│   ├── threat_engine.py        # Motor heurístico + firmas (Fase 5)
+│   ├── quarantine.py           # Mitigación controlada + auditoría (Fase 6)
+│   ├── reports.py              # JSON / CSV / HTML / PDF (Fase 7)
+│   ├── i18n.py                 # Bundles i18n backend (Fase 8)
+│   └── workers.py              # QThread workers (+ cancel de escaneo)
 ├── frontend/
-│   ├── index.html              # Layout del dashboard
+│   ├── index.html              # Layout del dashboard (usa ../assets/tailwind.css)
 │   ├── css/app.css
 │   └── js/
 │       ├── i18n.js             # Traducciones (8 idiomas)
 │       ├── app.js              # QWebChannel + UI helpers
 │       ├── dashboard.js        # Vistas, detección de dispositivo
-│       └── scanner.js          # Tablas y escaneo
-├── docs/                       # Documentación por fase
+│       ├── scanner.js          # Tablas y escaneo
+│       ├── threats.js          # Vista Amenazas (Fase 5)
+│       ├── quarantine.js       # Acciones + modal (Fase 6)
+│       ├── reports.js          # Exportar informes (Fase 7)
+│       └── settings.js         # Ajustes (Fase 8)
+├── assets/
+│   ├── PhotoDroid.ico           # Icono de ventana / .exe (PyInstaller)
+│   ├── PhotoDroid_*.png         # Logos (favicon, sidebar, landing)
+│   └── tailwind.css             # Tailwind build local (sin CDN)
+├── docs/                       # Documentación (PROPUESTA, fases)
 ├── reports/                    # Salida de reportes (Fase 7)
 ├── rules/                      # heuristics.json / signatures.json (Fase 5)
-└── PROPUESTA.md                # Propuesta técnica
+└── PROPUESTA.md                # (ver docs/PROPUESTA.md)
 ```
 
 ---
@@ -168,10 +256,18 @@ PhotonDroid/
 | `scanPermissions()` | Analiza permisos (requiere `listApps` antes) |
 | `listProcesses()` | Lista procesos |
 | `startScan()` | Escaneo completo |
+| `cancelScan()` | Cancela el escaneo en curso |
+| `reevaluateThreats()` | Recalcula el motor con la última caché |
+| `quarantineAction(action, package, confirmed)` | Mitigación (disable / force_stop / uninstall) |
+| `listQuarantineLog()` | Auditoría de cuarentena |
+| `exportReport(fmt)` | Exporta informe `json` / `csv` / `html` / `pdf` |
+| `listReports()` | Lista informes en `reports/` |
+| `saveSettings(json)` | Persiste `config/settings.json` |
+| `getI18nBundle()` | Bundle i18n del backend |
 
 **Python → JS (señales)**
 
-`log`, `progress`, `stateChanged`, `deviceFound`, `deviceError`, `appsReady`, `permissionsReady`, `servicesReady`, `processesReady`, `scanStage`, `scanFinished`, `scanError`
+`log`, `progress`, `stateChanged`, `deviceFound`, `deviceError`, `appsReady`, `permissionsReady`, `servicesReady`, `processesReady`, `threatsReady`, `scanStage`, `scanFinished`, `scanError`, `quarantineReady`, `quarantineError`, `quarantineLogReady`, `reportReady`, `reportError`, `settingsSaved`
 
 ---
 
@@ -182,20 +278,37 @@ PhotonDroid/
 | 1 | Ventana + frontend + QWebChannel | ✅ |
 | 2 | Detección ADB e info del dispositivo | ✅ |
 | 3 | Scanners: apps, permisos, procesos | ✅ |
-| 4 | UX de progreso/eventos en vivo | ⏳ |
-| 5 | `threat_engine` + `rules/*.json` | ⏳ |
-| 6 | Cuarentena / mitigación | ⏳ |
-| 7 | Reportes JSON/CSV/HTML/PDF | ⏳ |
-| 8 | i18n completo + settings | ✅ parcial (UI) |
-| 9 | Pulido y empaquetado (PyInstaller) | ⏳ |
+| 4 | UX de progreso/eventos en vivo | ✅ |
+| 5 | `threat_engine` + `rules/*.json` + vista Amenazas | ✅ |
+| 6 | Cuarentena / mitigación | ✅ |
+| 7 | Reportes JSON/CSV/HTML/PDF | ✅ |
+| 8 | i18n completo + settings | ✅ |
+| 9 | Pulido y empaquetado (PyInstaller) | ✅ |
 
 ---
 
 ## Documentación
 
-- [`PROPUESTA.md`](PROPUESTA.md) — propuesta técnica completa
-- [`docs/FASE3.md`](docs/FASE3.md) — scanners y puente JS↔Python
-- [`requerimientos.txt`](requerimientos.txt) — requerimientos originales
+- [`docs/PROPUESTA.md`](docs/PROPUESTA.md) — propuesta técnica completa
+- [`docs/FASE4.md`](docs/FASE4.md) — UX en vivo (progreso, estados, cancel)
+- [`docs/FASE5.md`](docs/FASE5.md) — motor de amenazas + vista Threats
+- [`docs/FASE6.md`](docs/FASE6.md) — cuarentena / mitigación
+- [`docs/FASE7.md`](docs/FASE7.md) — reportes JSON/CSV/HTML/PDF
+- [`docs/FASE8.md`](docs/FASE8.md) — i18n backend + ajustes
+- [`docs/FASE9.md`](docs/FASE9.md) — pulido y PyInstaller
+- [`_www/`](_www/) — landing multiidioma de la app
+
+---
+
+## Empaquetado (PyInstaller)
+
+```powershell
+pip install pyinstaller
+pyinstaller PhotoDroid.spec --noconfirm
+# dist/PhotoDroid/PhotoDroid.exe
+```
+
+El destino necesita **ADB** (platform-tools); se configura en Settings → ADB path.
 
 ---
 
@@ -206,7 +319,7 @@ PhotonDroid/
 | `ADB not found` | Instala platform-tools o pon la ruta en `adb_path` |
 | `no_devices` | Activa depuración USB y reconecta |
 | `unauthorized` | Acepta el diálogo en el teléfono |
-| Ventana en blanco | Revisa que `frontend/index.html` exista y que el CDN de Tailwind cargue |
+| Ventana en blanco o sin estilos | Revisa que existan `frontend/index.html` y `assets/tailwind.css` (CSS local, sin CDN) |
 | UI lenta al escanear | Reduce `permission_scan_system` / usa `Start scan` con menos apps de sistema |
 
 ---

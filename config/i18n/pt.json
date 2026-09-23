@@ -1,0 +1,23 @@
+{
+  "app.subtitle": "Segurança Android",
+  "nav.dashboard": "Painel",
+  "nav.scanner": "Scanner",
+  "nav.threats": "Ameaças",
+  "nav.apps": "Aplicativos",
+  "nav.reports": "Relatórios",
+  "nav.settings": "Configurações",
+  "sidebar.status": "Status",
+  "sidebar.state": "Estado",
+  "device.waiting": "Aguardando dispositivo…",
+  "device.connected": "Dispositivo conectado",
+  "device.detect": "Detectar dispositivo",
+  "header.title": "Painel de segurança",
+  "header.hint": "Analise, diagnostique e limpe dispositivos conectados",
+  "scan.start": "Iniciar análise",
+  "scan.cancel": "Cancelar",
+  "reports.title": "Exportar relatórios",
+  "settings.title": "Configurações",
+  "quarantine.title": "Quarentena / mitigação",
+  "modal.confirm": "Confirmar",
+  "modal.cancel": "Cancelar"
+}

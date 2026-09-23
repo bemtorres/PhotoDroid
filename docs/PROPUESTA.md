@@ -72,12 +72,14 @@ photo-droid/
 │   ├── reports.py              # Reportes JSON, CSV, HTML, PDF
 │   └── i18n.py                 # Carga/selector de idioma desde JSON
 ├── frontend/
-│   ├── index.html              # Dashboard HeroUI (CDN) + Tailwind
+│   ├── index.html              # Dashboard HeroUI + Tailwind local
 │   ├── css/app.css
 │   └── js/
 │       ├── app.js              # Conexión QWebChannel + i18n
 │       ├── dashboard.js        # Vistas y eventos
 │       └── scanner.js          # Actualizaciones de escaneo en RT
+├── assets/
+│   └── tailwind.css            # Build local de Tailwind (sin CDN)
 ├── rules/
 │   ├── heuristics.json         # Puntuación de amenazas
 │   └── signatures.json         # Firmas conocidas
@@ -135,15 +137,15 @@ Dashboard estilo ciberseguridad con:
 
 | Fase | Entregable | Esfuerzo est. |
 |------|-----------|---------------|
-| **1** | `main.py` + QWebEngineView + QWebChannel + `index.html` base HeroUI | 1–2 días |
-| **2** | `adb_manager.py` + `device_manager.py`: detección USB e info del equipo | 1 día |
-| **3** | Escáneres: apps, permisos, procesos | 2 días |
-| **4** | Wiring frontend↔backend: botones, logs y progreso en tiempo real | 1–2 días |
-| **5** | `threat_engine.py` + `rules/*.json` + vista de amenazas | 1–2 días |
-| **6** | `quarantine.py` + modales de confirmación + auditoría | 1 día |
-| **7** | `reports.py` (JSON/CSV/HTML/PDF) | 1 día |
-| **8** | i18n completo (8 idiomas) + `settings.json` + ajustes | 1 día |
-| **9** | Pulido UI, manejo de errores, empaquetado (PyInstaller) | 1 día |
+| **1** | `main.py` + QWebEngineView + QWebChannel + `index.html` base HeroUI | ✅ |
+| **2** | `adb_manager.py` + `device_manager.py`: detección USB e info del equipo | ✅ |
+| **3** | Escáneres: apps, permisos, procesos | ✅ |
+| **4** | Wiring frontend↔backend: botones, logs y progreso en tiempo real | ✅ |
+| **5** | `threat_engine.py` + `rules/*.json` + vista de amenazas | ✅ |
+| **6** | `quarantine.py` + modales de confirmación + auditoría | ✅ |
+| **7** | `reports.py` (JSON/CSV/HTML/PDF) | ✅ |
+| **8** | i18n completo (8 idiomas) + `settings.json` + ajustes | ✅ |
+| **9** | Pulido UI, manejo de errores, empaquetado (PyInstaller) | ✅ |
 
 **MVP mínimo (fases 1–4):** ventana + detección de dispositivo + listados + UI en vivo.
 
@@ -155,7 +157,7 @@ Dashboard estilo ciberseguridad con:
 | Dispositivo sin depuración USB | Modal con instrucciones paso a paso |
 | UI congelada por comandos lentos | Todo en QThread; timeouts en subprocess |
 | Acciones destructivas accidentales | Confirmación obligatoria + log de auditoría |
-| HeroUI vía CDN sin internet | Opción de vendorizar assets localmente |
+| Tailwind/CDN caído o sin internet | Tailwind vendorizado en `assets/tailwind.css` (build local) |
 | Permisos de `dumpsys` variables entre Android | Múltiples fallbacks por versión SDK |
 
 ## 10. Criterios de aceptación del MVP

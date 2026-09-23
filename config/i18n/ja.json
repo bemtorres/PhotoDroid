@@ -1,0 +1,23 @@
+{
+  "app.subtitle": "Android セキュリティ",
+  "nav.dashboard": "ダッシュボード",
+  "nav.scanner": "スキャナー",
+  "nav.threats": "脅威",
+  "nav.apps": "アプリ",
+  "nav.reports": "レポート",
+  "nav.settings": "設定",
+  "sidebar.status": "ステータス",
+  "sidebar.state": "状態",
+  "device.waiting": "デバイス待機中…",
+  "device.connected": "デバイス接続済み",
+  "device.detect": "デバイス検出",
+  "header.title": "セキュリティダッシュボード",
+  "header.hint": "接続デバイスの分析・診断・クリーンアップ",
+  "scan.start": "スキャン開始",
+  "scan.cancel": "キャンセル",
+  "reports.title": "レポートをエクスポート",
+  "settings.title": "設定",
+  "quarantine.title": "隔離 / 緩和",
+  "modal.confirm": "確認",
+  "modal.cancel": "キャンセル"
+}

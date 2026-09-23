@@ -1,12 +1,19 @@
 {
   "language": "en",
   "theme": "dark",
-  "adb_path": "adb",
-  "risk_thresholds": { "low": 20, "suspicious": 50, "high": 75 },
+  "adb_path": "C:\\Users\\benja\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe",
+  "risk_thresholds": {
+    "low": 20,
+    "suspicious": 50,
+    "high": 75
+  },
   "scan": {
     "include_system_apps": true,
     "permission_scan_system": false,
     "watch_interval_ms": 2000
   },
-  "reports": { "output_dir": "reports", "default_format": "html" }
+  "reports": {
+    "output_dir": "reports",
+    "default_format": "html"
+  }
 }

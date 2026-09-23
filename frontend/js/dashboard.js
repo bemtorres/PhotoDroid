@@ -1,10 +1,21 @@
-const DEVICE_REASONS = {
-  no_devices: "No devices found — connect USB and enable debugging",
-  unauthorized: "Device unauthorized — accept the USB debugging prompt",
-  offline: "Device offline — reconnect USB",
-  no_permissions: "No ADB permissions (udev rules?)",
-  no_online_device: "Devices listed but none online",
+const DEVICE_REASON_KEYS = {
+  no_devices: "device.err.noDevices",
+  unauthorized: "device.err.unauthorized",
+  offline: "device.err.offline",
+  no_permissions: "device.err.permissions",
+  no_online_device: "device.err.notOnline",
+  adb_not_found: "device.err.adbNotFound",
+  already_running: "device.err.alreadyRunning",
 };
+
+function deviceErrorText(reason) {
+  const key = DEVICE_REASON_KEYS[reason];
+  if (key) return t(key);
+  if (typeof reason === "string" && reason.startsWith("unexpected:")) {
+    return `${t("device.err.failed")}: ${reason.replace("unexpected:", "").trim()}`;
+  }
+  return reason || t("device.err.failed");
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".nav-item").forEach((btn) => {
@@ -29,7 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const data = JSON.parse(raw);
         if (!data.started) {
-          UI.log(`[ui] detección omitida: ${data.reason || "unknown"}`);
+          const text = deviceErrorText(data.reason || "unknown");
+          UI.log(`[ui] ${text}`);
+          if (data.reason === "already_running") {
+            UI.setDevice(null, text);
+            UI.setState("idle");
+          }
           UI.setProgress(100);
         }
       } catch (e) {
@@ -60,8 +76,10 @@ function bindDeviceSignals() {
 
   bridge.deviceError.connect((reason) => {
     UI.setConnection(false);
-    UI.setDevice(null, DEVICE_REASONS[reason] || reason);
+    const text = deviceErrorText(reason);
+    UI.setDevice(null, text);
     UI.setProgress(100);
-    UI.log(`[device] ${DEVICE_REASONS[reason] || reason}`);
+    UI.setState("idle");
+    UI.log(`[device] ${text} (${reason})`);
   });
 }

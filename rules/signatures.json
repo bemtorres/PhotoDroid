@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "known_packages": [
+    {
+      "id": "k1",
+      "package": "com.flash.player.fake",
+      "score": 90,
+      "title": "Known fake Flash player"
+    },
+    {
+      "id": "k2",
+      "package": "com.system.update.silent",
+      "score": 85,
+      "title": "Silent system updater impostor"
+    },
+    {
+      "id": "k3",
+      "package": "com.android.dangerous.root",
+      "score": 95,
+      "title": "Root cloak / stealth package"
+    }
+  ],
+  "package_patterns": [
+    {
+      "id": "p1",
+      "regex": "(?i)\\b(virus|malware|trojan|spyware|keylog|rat)\\b",
+      "score": 70,
+      "title": "Suspicious package name"
+    },
+    {
+      "id": "p2",
+      "regex": "(?i)(fake|crack|warez|pirat)",
+      "score": 55,
+      "title": "Crack / pirated app naming"
+    }
+  ],
+  "installer_rules": [
+    {
+      "id": "i1",
+      "installers": ["sideloaded", "unknown", ""],
+      "score": 25,
+      "title": "Sideloaded or unknown installer",
+      "apply_to_system": false
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "app.subtitle": "Android Security",
+  "nav.dashboard": "Dashboard",
+  "nav.scanner": "Scanner",
+  "nav.threats": "Threats",
+  "nav.apps": "Apps",
+  "nav.reports": "Reports",
+  "nav.settings": "Settings",
+  "sidebar.status": "Status",
+  "sidebar.state": "State",
+  "device.waiting": "Waiting for device…",
+  "device.connected": "Device connected",
+  "device.detect": "Detect device",
+  "header.title": "Security Dashboard",
+  "header.hint": "Analyze, diagnose and clean connected devices",
+  "scan.start": "Start scan",
+  "scan.cancel": "Cancel",
+  "reports.title": "Export reports",
+  "settings.title": "Settings",
+  "quarantine.title": "Quarantine / mitigation",
+  "modal.confirm": "Confirm",
+  "modal.cancel": "Cancel"
+}

@@ -24,6 +24,10 @@ reports/*
 build/
 dist/
 *.spec
+!PhotoDroid.spec
+
+# Auditoría de cuarentena (local)
+config/quarantine_audit.jsonl
 
 # GitHub Pages (build local del workflow)
 _site/

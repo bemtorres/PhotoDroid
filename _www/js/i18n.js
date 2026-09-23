@@ -28,7 +28,7 @@ const SITE_I18N = {
       "Probado en 3.13. En la terminal: <code>python --version</code>.",
     "installPage.req2t": "ADB (platform-tools)",
     "installPage.req2d":
-      "Windows suele traerlo en <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. Si no está en el <code>PATH</code>, se indica en <code>config/settings.json → adb_path</code>.",
+      "PhotoDroid habla con el móvil mediante <code>adb</code>. El <code>PATH</code> es la lista de carpetas donde la terminal busca comandos: si <code>adb</code> está ahí, basta <code>adb devices</code>. Si no, escribe la ruta completa en <code>config/settings.json → adb_path</code> (por defecto <code>\"adb\"</code>). En Windows suele estar en <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
     "installPage.req3t": "Android con depuración USB",
     "installPage.req3d":
       "Activa <strong>Depuración USB</strong> en Ajustes → Acerca del teléfono (varias veces en «compilación») y acepta el diálogo al conectar el cable.",
@@ -222,7 +222,9 @@ const SITE_I18N = {
     "install.s1": "1.0 · requisitos",
     "install.h1": "Python y ADB",
     "install.p1":
-      "Necesitas Python 3.10 o superior y Android <strong>platform-tools</strong> (<code>adb</code>). En Windows suele estar en <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. Si no está en el <code>PATH</code>, se configura en <code>config/settings.json → adb_path</code>.",
+      "Necesitas Python 3.10+ y el binario <strong>adb</strong> (Android Debug Bridge, de <em>platform-tools</em>). El <strong>PATH</strong> son las carpetas donde el sistema busca <code>adb</code> al escribirlo en la terminal. Si está en el PATH, <code>adb devices</code> funciona sin más. Si no, PhotoDroid lee la ruta en <code>config/settings.json → adb_path</code> (valor por defecto <code>\"adb\"</code>; usa la ruta absoluta a <code>adb.exe</code> si hace falta). En Windows: <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
+    "install.c1": "# ADB en el PATH · debe listar el equipo con state=device",
+    "install.c1b": "# Si ADB no está en el PATH → settings.json \"adb_path\": \"C:\\\\...\\\\adb.exe\"",
     "install.s2": "2.0 · entorno",
     "install.h2": "Clonar e instalar dependencias",
     "install.p2":
@@ -312,7 +314,7 @@ const SITE_I18N = {
       "Tested on 3.13. In the terminal: <code>python --version</code>.",
     "installPage.req2t": "ADB (platform-tools)",
     "installPage.req2d":
-      "On Windows usually under <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. If not on <code>PATH</code>, set <code>config/settings.json → adb_path</code>.",
+      "PhotoDroid talks to the phone with <code>adb</code>. The <code>PATH</code> is the list of folders the terminal searches for commands: if <code>adb</code> is there, <code>adb devices</code> is enough. If not, put the full path in <code>config/settings.json → adb_path</code> (default <code>\"adb\"</code>). On Windows it is usually under <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
     "installPage.req3t": "Android with USB debugging",
     "installPage.req3d":
       "Enable <strong>USB debugging</strong> in Settings → About phone (tap Build several times) and accept the dialog when you plug in the cable.",
@@ -504,7 +506,9 @@ const SITE_I18N = {
     "install.s1": "1.0 · requirements",
     "install.h1": "Python and ADB",
     "install.p1":
-      "You need Python 3.10+ and Android <strong>platform-tools</strong> (<code>adb</code>). On Windows it is usually under <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. If it is not on the <code>PATH</code>, set it in <code>config/settings.json → adb_path</code>.",
+      "You need Python 3.10+ and the <strong>adb</strong> binary (Android Debug Bridge, from <em>platform-tools</em>). The <strong>PATH</strong> is the list of folders the OS searches when you type <code>adb</code>. If it is on the PATH, <code>adb devices</code> just works. If not, PhotoDroid reads the path from <code>config/settings.json → adb_path</code> (default <code>\"adb\"</code>; use the absolute path to <code>adb.exe</code> if needed). On Windows: <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
+    "install.c1": "# ADB on PATH · should list the device with state=device",
+    "install.c1b": "# If ADB is not on PATH → settings.json \"adb_path\": \"C:\\\\...\\\\adb.exe\"",
     "install.s2": "2.0 · environment",
     "install.h2": "Clone and install dependencies",
     "install.p2": "A virtualenv keeps PySide6 isolated from the system.",
@@ -593,7 +597,7 @@ const SITE_I18N = {
       "Testado na 3.13. No terminal: <code>python --version</code>.",
     "installPage.req2t": "ADB (platform-tools)",
     "installPage.req2d":
-      "No Windows costuma ficar em <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. Se não estiver no <code>PATH</code>, configure <code>config/settings.json → adb_path</code>.",
+      "PhotoDroid fala com o celular pelo <code>adb</code>. O <code>PATH</code> é a lista de pastas onde o terminal procura comandos: se <code>adb</code> estiver lá, basta <code>adb devices</code>. Se não, coloque o caminho completo em <code>config/settings.json → adb_path</code> (padrão <code>\"adb\"</code>). No Windows costuma ficar em <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
     "installPage.req3t": "Android com depuração USB",
     "installPage.req3d":
       "Ative a <strong>depuração USB</strong> em Ajustes → Sobre o telefone (várias vezes em «compilação») e aceite o diálogo ao ligar o cabo.",
@@ -783,7 +787,9 @@ const SITE_I18N = {
     "install.s1": "1.0 · requisitos",
     "install.h1": "Python e ADB",
     "install.p1":
-      "Você precisa de Python 3.10+ e Android <strong>platform-tools</strong> (<code>adb</code>). No Windows costuma ficar em <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. Se não estiver no <code>PATH</code>, configure em <code>config/settings.json → adb_path</code>.",
+      "Você precisa de Python 3.10+ e do binário <strong>adb</strong> (Android Debug Bridge, de <em>platform-tools</em>). O <strong>PATH</strong> é a lista de pastas onde o sistema procura <code>adb</code> quando você digita o comando. Se estiver no PATH, <code>adb devices</code> funciona. Se não, o PhotoDroid lê o caminho em <code>config/settings.json → adb_path</code> (padrão <code>\"adb\"</code>; use o caminho absoluto de <code>adb.exe</code> se precisar). No Windows: <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
+    "install.c1": "# ADB no PATH · deve listar o aparelho com state=device",
+    "install.c1b": "# Se o ADB não está no PATH → settings.json \"adb_path\": \"C:\\\\...\\\\adb.exe\"",
     "install.s2": "2.0 · ambiente",
     "install.h2": "Clonar e instalar dependências",
     "install.p2": "Um virtualenv mantém o PySide6 isolado do sistema.",
@@ -870,7 +876,7 @@ const SITE_I18N = {
     "installPage.req1d": "已在 3.13 上验证。终端执行：<code>python --version</code>。",
     "installPage.req2t": "ADB（platform-tools）",
     "installPage.req2d":
-      "Windows 通常在 <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>。若不在 <code>PATH</code>，请设 <code>config/settings.json → adb_path</code>。",
+      "PhotoDroid 通过 <code>adb</code> 与手机通信。<code>PATH</code> 是终端查找命令的文件夹列表：若 <code>adb</code> 在其中，<code>adb devices</code> 即可。否则把完整路径写入 <code>config/settings.json → adb_path</code>（默认 <code>\"adb\"</code>）。Windows 通常在 <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>。",
     "installPage.req3t": "已开 USB 调试的 Android",
     "installPage.req3d":
       "在设置 → 关于手机中多次点击「版本号」启用 <strong>USB 调试</strong>，连数据线时点允许。",
@@ -1033,7 +1039,9 @@ const SITE_I18N = {
     "install.s1": "1.0 · 环境要求",
     "install.h1": "Python 与 ADB",
     "install.p1":
-      "需要 Python 3.10+ 与 Android <strong>platform-tools</strong>（<code>adb</code>）。Windows 通常在 <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>。若不在 <code>PATH</code>，请在 <code>config/settings.json → adb_path</code> 配置。",
+      "需要 Python 3.10+ 与 <strong>adb</strong> 可执行文件（Android Debug Bridge，来自 <em>platform-tools</em>）。<strong>PATH</strong> 是系统查找命令的目录列表：若 <code>adb</code> 在 PATH 中，直接运行 <code>adb devices</code> 即可。否则 PhotoDroid 会读取 <code>config/settings.json → adb_path</code>（默认 <code>\"adb\"</code>；必要时填 <code>adb.exe</code> 的绝对路径）。Windows 常见位置：<code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>。",
+    "install.c1": "# ADB 在 PATH · 应列出设备且 state=device",
+    "install.c1b": "# 若 ADB 不在 PATH → settings.json \"adb_path\": \"C:\\\\...\\\\adb.exe\"",
     "install.s2": "2.0 · 环境",
     "install.h2": "克隆并安装依赖",
     "install.p2": "virtualenv 可将 PySide6 与系统隔离。",
@@ -1116,7 +1124,7 @@ const SITE_I18N = {
     "installPage.req1d": "3.13에서 확인. 터미널: <code>python --version</code>.",
     "installPage.req2t": "ADB (platform-tools)",
     "installPage.req2d":
-      "Windows 보통 <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. <code>PATH</code>에 없으면 <code>config/settings.json → adb_path</code>.",
+      "PhotoDroid는 <code>adb</code>로 폰과 통신합니다. <code>PATH</code>는 터미널이 명령을 검색하는 폴더 목록입니다. <code>adb</code>가 PATH에 있으면 <code>adb devices</code>만으로 충분합니다. 없으면 <code>config/settings.json → adb_path</code>에 전체 경로를 넣으세요(기본값 <code>\"adb\"</code>). Windows 보통 <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
     "installPage.req3t": "USB 디버깅 Android",
     "installPage.req3d":
       "설정 → 휴대폰 정보에서 빌드 번호를 여러 번 눌러 <strong>USB 디버깅</strong>을 켜고 케이블 연결 시 허용하세요.",
@@ -1280,7 +1288,9 @@ const SITE_I18N = {
     "install.s1": "1.0 · 요구사항",
     "install.h1": "Python과 ADB",
     "install.p1":
-      "Python 3.10+와 Android <strong>platform-tools</strong>(<code>adb</code>)가 필요합니다. Windows 보통 경로: <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. <code>PATH</code>에 없으면 <code>config/settings.json → adb_path</code>에 설정하세요.",
+      "Python 3.10+와 <strong>adb</strong> 바이너리(Android Debug Bridge, <em>platform-tools</em>)가 필요합니다. <strong>PATH</strong>는 명령을 입력할 때 시스템이 검색하는 폴더 목록입니다. PATH에 있으면 <code>adb devices</code>로 바로 됩니다. 없으면 PhotoDroid가 <code>config/settings.json → adb_path</code>를 읽습니다(기본값 <code>\"adb\"</code>; 필요하면 <code>adb.exe</code> 절대 경로). Windows: <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
+    "install.c1": "# ADB가 PATH에 · state=device로 기기 표시 필요",
+    "install.c1b": "# ADB가 PATH에 없으면 → settings.json \"adb_path\": \"C:\\\\...\\\\adb.exe\"",
     "install.s2": "2.0 · 환경",
     "install.h2": "클론 후 의존성 설치",
     "install.p2": "virtualenv로 PySide6를 시스템과 분리합니다.",
@@ -1363,7 +1373,7 @@ const SITE_I18N = {
     "installPage.req1d": "3.13 で確認済み。ターミナル: <code>python --version</code>。",
     "installPage.req2t": "ADB（platform-tools）",
     "installPage.req2d":
-      "Windows は通常 <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>。<code>PATH</code> に無ければ <code>config/settings.json → adb_path</code>。",
+      "PhotoDroid は <code>adb</code> で端末と通信します。<code>PATH</code> はコマンド検索用のフォルダ一覧で、<code>adb</code> があれば <code>adb devices</code> で足ります。無ければ <code>config/settings.json → adb_path</code> に完全パスを指定（既定 <code>\"adb\"</code>）。Windows は通常 <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>。",
     "installPage.req3t": "USB デバッグ中の Android",
     "installPage.req3d":
       "設定 → フォン情報でビルド番号を数回タップして <strong>USB デバッグ</strong>を有効にし、ケーブル接続時は許可します。",
@@ -1527,7 +1537,9 @@ const SITE_I18N = {
     "install.s1": "1.0 · 要件",
     "install.h1": "Python と ADB",
     "install.p1":
-      "Python 3.10+ と Android <strong>platform-tools</strong>（<code>adb</code>）が必要です。Windows は通常 <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>。<code>PATH</code> に無ければ <code>config/settings.json → adb_path</code> で指定。",
+      "Python 3.10+ と <strong>adb</strong> バイナリ（Android Debug Bridge、<em>platform-tools</em>）が必要です。<strong>PATH</strong> はコマンド入力時に OS が検索するフォルダ一覧です。PATH にあれば <code>adb devices</code> だけで動きます。無ければ PhotoDroid は <code>config/settings.json → adb_path</code> を読みます（既定 <code>\"adb\"</code>；必要なら <code>adb.exe</code> の絶対パス）。Windows: <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>。",
+    "install.c1": "# ADB が PATH 上 · state=device で端末が出るはず",
+    "install.c1b": "# ADB が PATH に無ければ → settings.json \"adb_path\": \"C:\\\\...\\\\adb.exe\"",
     "install.s2": "2.0 · 環境",
     "install.h2": "クローンと依存関係",
     "install.p2": "virtualenv で PySide6 をシステムから分離します。",
@@ -1611,7 +1623,7 @@ const SITE_I18N = {
       "Mit 3.13 getestet. Im Terminal: <code>python --version</code>.",
     "installPage.req2t": "ADB (platform-tools)",
     "installPage.req2d":
-      "Windows meist unter <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. Ohne <code>PATH</code>: <code>config/settings.json → adb_path</code>.",
+      "PhotoDroid spricht mit dem Telefon über <code>adb</code>. Der <code>PATH</code> ist die Liste der Ordner, in denen die Terminal nach Befehlen sucht: liegt <code>adb</code> dort, reicht <code>adb devices</code>. Sonst den vollständigen Pfad in <code>config/settings.json → adb_path</code> eintragen (Standard <code>\"adb\"</code>). Unter Windows meist <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
     "installPage.req3t": "Android mit USB-Debugging",
     "installPage.req3d":
       "<strong>USB-Debugging</strong> unter Einstellungen → Über das Telefon (mehrmals auf Build tippen) aktivieren und beim Kabel den Dialog bestätigen.",
@@ -1803,7 +1815,9 @@ const SITE_I18N = {
     "install.s1": "1.0 · Voraussetzungen",
     "install.h1": "Python und ADB",
     "install.p1":
-      "Python 3.10+ und Android <strong>platform-tools</strong> (<code>adb</code>). Unter Windows meist <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. Fehlt es im <code>PATH</code>, in <code>config/settings.json → adb_path</code> setzen.",
+      "Du brauchst Python 3.10+ und das <strong>adb</strong>-Binary (Android Debug Bridge aus <em>platform-tools</em>). Der <strong>PATH</strong> ist die Liste der Ordner, die das System bei <code>adb</code> durchsucht. Liegt es im PATH, reicht <code>adb devices</code>. Sonst liest PhotoDroid den Pfad aus <code>config/settings.json → adb_path</code> (Standard <code>\"adb\"</code>; bei Bedarf der absolute Pfad zu <code>adb.exe</code>). Windows: <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
+    "install.c1": "# ADB im PATH · Gerät mit state=device anzeigen",
+    "install.c1b": "# Ohne PATH → settings.json \"adb_path\": \"C:\\\\...\\\\adb.exe\"",
     "install.s2": "2.0 · Umgebung",
     "install.h2": "Klonen und Abhängigkeiten",
     "install.p2": "Ein virtualenv hält PySide6 vom System getrennt.",
@@ -1892,7 +1906,7 @@ const SITE_I18N = {
       "Testé sur 3.13. Dans le terminal : <code>python --version</code>.",
     "installPage.req2t": "ADB (platform-tools)",
     "installPage.req2d":
-      "Sous Windows souvent <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. Sinon hors <code>PATH</code> : <code>config/settings.json → adb_path</code>.",
+      "PhotoDroid parle au téléphone via <code>adb</code>. Le <code>PATH</code> est la liste de dossiers où le terminal cherche les commandes : si <code>adb</code> y est, <code>adb devices</code> suffit. Sinon, mettez le chemin complet dans <code>config/settings.json → adb_path</code> (défaut <code>\"adb\"</code>). Sous Windows souvent <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
     "installPage.req3t": "Android avec débogage USB",
     "installPage.req3d":
       "Activez le <strong>débogage USB</strong> dans Paramètres → À propos du téléphone (plusieurs fois sur le build) et acceptez le dialogue en branchant le câble.",
@@ -2084,7 +2098,9 @@ const SITE_I18N = {
     "install.s1": "1.0 · prérequis",
     "install.h1": "Python et ADB",
     "install.p1":
-      "Python 3.10+ et Android <strong>platform-tools</strong> (<code>adb</code>). Sous Windows : <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>. Sinon, définissez <code>config/settings.json → adb_path</code>.",
+      "Python 3.10+ et le binaire <strong>adb</strong> (Android Debug Bridge, dans <em>platform-tools</em>). Le <strong>PATH</strong> est la liste de dossiers où le système cherche la commande <code>adb</code>. S’il y est, <code>adb devices</code> suffit. Sinon PhotoDroid lit le chemin dans <code>config/settings.json → adb_path</code> (défaut <code>\"adb\"</code> ; sinon le chemin absolu de <code>adb.exe</code>). Windows : <code>%LOCALAPPDATA%\\Android\\Sdk\\platform-tools</code>.",
+    "install.c1": "# ADB dans le PATH · doit lister l’appareil avec state=device",
+    "install.c1b": "# Sans PATH → settings.json \"adb_path\": \"C:\\\\...\\\\adb.exe\"",
     "install.s2": "2.0 · environnement",
     "install.h2": "Cloner et installer les dépendances",
     "install.p2": "Un virtualenv isole PySide6 du système.",
